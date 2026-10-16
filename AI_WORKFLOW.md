@@ -1,0 +1,66 @@
+# AI Workflow Log
+
+## 1. Overview
+
+This is a solo four-day hackathon build.
+The agent used was omnirush with GPT 6 Astra.
+The workflow was to write planning documents first, one at a time.
+Each implementation task was handled in its own session and commit.
+Human approval gates were used before implementation and scope changes.
+
+## 2. The workflow loop
+
+- **Planning:** The agent wrote `PRD.md`, `AGENTS.md`, `PLAN.md`, and
+  `TASKS.md` one at a time; I reviewed each before the next document.
+- **Per task:** The agent re-read `AGENTS.md` and the relevant `TASKS.md`
+  entry, showed a plan, waited for my OK, implemented, ran acceptance checks,
+  pasted real output, and made one commit.
+- **Human verification:** I checked `git status`, `git log`, and `npm test`
+  before starting the next task.
+
+## 3. Rules the agent works under
+
+- Never invent benchmark numbers, thresholds, timings, or detection claims;
+  benchmark results come only from real scripts in `/bench`.
+- Route every random choice through the shared seeded PRNG; never use
+  `Math.random()` or an unseeded random source.
+- Keep the public web/API path demo-only; never accept arbitrary target URLs.
+- Run `npm test` after changes, use reference-value tests for statistical code,
+  count discarded/errors, and redact sensitive metadata.
+- Ask before adding dependencies, changing the statistical approach or verdict
+  semantics, or deleting/renaming files.
+- Make small, focused conventional commits with one task per commit; keep
+  pinned versions, lockfiles, Docker, and Compose aligned.
+
+## 4. Log
+
+| Task | What the agent proposed | What I changed or caught | Outcome |
+|---|---|---|---|
+| Step 0 (context prompt) | Asked five clarifying questions before writing anything. | I answered public site scope, CLI scope, sensitivity threshold, deployment target, and demo app behavior. | Product scope was clarified before `PRD.md`. |
+| T1.1 (bootstrap) | Proposed Node `22.23.3`, `express@5.3.0`, and `undici@8.12.2`. | I required verification that every version existed before pinning and required `.gitignore` in the same commit. | No version changed: local Node was `v22.23.3`; npm verified Express `5.3.0` and undici `8.12.2`. `.gitignore` was added in commit `0dfe7df`. |
+| T1.2 | Added the `src/`, `public/`, `bench/`, and `test/` structure, a minimal ESM web health route, and stub service entrypoints for packaging tests. | No changes needed. | Committed as `1cd8495`; `npm test` and the health smoke tests passed. |
+| T1.3 (Dockerfile) | Added the production Dockerfile and `.dockerignore`. | The command sandbox crashed after writing files (`sandbox is not reachable`). The agent refused to claim checks passed, did not tick the task, and did not commit. I ran `npm test`, `docker build`, `docker run`, and `curl /healthz`, then pasted the output. | The agent verified both files against my output, ticked T1.3, and committed `548a8ce`. |
+
+## 5. Where the agent helped vs. where I intervened
+
+**The agent helped by:**
+
+- Asking clarifying questions before drafting the product requirements.
+- Turning the approved scope into reviewed planning documents and task-sized
+  implementation steps.
+- Implementing T1.1 and T1.2 with acceptance checks, then reviewing T1.3
+  against the verification output I supplied.
+
+**I intervened by:**
+
+- Supplying the product decisions that resolved the five initial questions.
+- Requiring version verification and same-commit `.gitignore` coverage for T1.1.
+- Running T1.3 verification by hand after the sandbox failure and supplying
+  the real output before the task was ticked and committed.
+
+## 6. Honest limitations
+
+- The agent's command sandbox failed once during T1.3.
+- I ran some T1.3 verification by hand and supplied its output.
+- All benchmark numbers will come from scripts in `/bench`, never from the
+  agent's memory.
