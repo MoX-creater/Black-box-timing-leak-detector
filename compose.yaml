@@ -1,0 +1,78 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      vulnerable:
+        condition: service_healthy
+      fixed:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/healthz').then(response => {
+          if (!response.ok) process.exit(1);
+          }).catch(() => process.exit(1));
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  vulnerable:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["node", "src/demos/stub.js"]
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3001"
+      SERVICE_NAME: vulnerable
+    expose:
+      - "3001"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3001/healthz').then(response => {
+          if (!response.ok) process.exit(1);
+          }).catch(() => process.exit(1));
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  fixed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["node", "src/demos/stub.js"]
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3002"
+      SERVICE_NAME: fixed
+    expose:
+      - "3002"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3002/healthz').then(response => {
+          if (!response.ok) process.exit(1);
+          }).catch(() => process.exit(1));
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s

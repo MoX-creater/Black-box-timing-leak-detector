@@ -44,7 +44,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-09
 
-### T1.4 — [Must-have] Add the three-service Docker Compose skeleton.
+### [x] T1.4 — [Must-have] Add the three-service Docker Compose skeleton.
 
 - **Description:** Define web, vulnerable, and fixed services with internal demo ports and only the web/API port published.
 - **Acceptance:** `docker compose config` succeeds; `docker compose up --build -d` starts all skeleton services; `curl -fsS http://localhost:3000/healthz` succeeds; Compose publishes no host ports for demo services; `docker compose down -v` cleans up.
