@@ -36,7 +36,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** S
 - **Linked PRD:** FR-07, FR-09
 
-### T1.3 — [Must-have] Add the production Dockerfile and ignore rules.
+### [x] T1.3 — [Must-have] Add the production Dockerfile and ignore rules.
 
 - **Description:** Build a production image from `node:22.23.3-bookworm-slim` using `npm ci` and the repository entrypoint.
 - **Acceptance:** `docker build -t black-box-timing-leak-detector:local .` succeeds; `docker run --rm -p 3000:3000 black-box-timing-leak-detector:local` serves `/healthz`; `.dockerignore` excludes dependencies, secrets, and generated output.
