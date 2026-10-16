@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: black-box-timing-leak-detector
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerCommand: node src/launcher.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: HOST
+        value: 0.0.0.0

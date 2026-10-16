@@ -52,7 +52,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-06, FR-09, FR-10
 
-### T1.5 — [Must-have] Add the Render deployment skeleton.
+### [x] T1.5 — [Must-have] Add the Render deployment skeleton.
 
 - **Description:** Add the Docker Web Service configuration, health path, environment placeholders, and the production launcher entrypoint without performing the live deploy yet.
 - **Acceptance:** `render.yaml` references `./Dockerfile`, the `/healthz` health check, and no secret values; the image builds with the launcher command; the launcher forwards termination to child processes in its smoke test.
