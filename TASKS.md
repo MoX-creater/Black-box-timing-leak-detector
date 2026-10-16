@@ -28,7 +28,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** S
 - **Linked PRD:** FR-09, FR-11
 
-### T1.2 — [Must-have] Create the source/test layout and minimal health entrypoints.
+### [x] T1.2 — [Must-have] Create the source/test layout and minimal health entrypoints.
 
 - **Description:** Add the `src/`, `public/`, `bench/`, and `test/` structure plus a minimal ESM web health route and stub service entrypoints for packaging tests.
 - **Acceptance:** `npm test` passes a real health/entrypoint smoke test; imports use explicit `.js` extensions; no CommonJS files are added.
