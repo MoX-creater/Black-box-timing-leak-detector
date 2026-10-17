@@ -60,7 +60,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-09, FR-11
 
-### T1.6 — [Must-have] Implement the shared seeded PRNG and monotonic clock abstraction.
+### [x] T1.6 — [Must-have] Implement the shared seeded PRNG and monotonic clock abstraction.
 
 - **Description:** Provide deterministic seeded draws for sampling/noise and an injectable `process.hrtime.bigint()`-based duration clock.
 - **Acceptance:** `node --test test/prng.test.js` proves identical seeds produce identical sequences and different seeds produce different sequences; `node --test test/clock.test.js` proves duration conversion; `rg 'Math\.random' src bench test` returns no matches.
