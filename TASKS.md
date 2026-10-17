@@ -108,7 +108,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** L
 - **Linked PRD:** FR-01, FR-02, FR-03, FR-08
 
-### T1.12 — [Must-have] Define and validate the run-report envelope.
+### [x] T1.12 — [Must-have] Define and validate the run-report envelope.
 
 - **Description:** Serialize configuration, observations, inference, seed, counts, stop reason, warnings, and redacted request metadata as one JSON report.
 - **Acceptance:** `node --test test/report.test.js` validates required fields, distinguishes configuration/observation/inference, preserves error/discard counts, omits secrets, and round-trips a completed fixture.

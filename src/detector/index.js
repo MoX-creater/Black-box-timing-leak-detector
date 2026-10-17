@@ -8,6 +8,19 @@ import {
 
 const SAMPLING_SEED_DOMAIN = "sampling";
 
+export const STOP_REASON = Object.freeze({
+  ABORTED: "aborted",
+  BASELINE_STATUS_MISMATCH: "baseline-status-mismatch",
+  DATA_QUALITY_FAILURE: "data-quality-failure",
+  FATAL_TRANSPORT_ERROR: "fatal-transport-error",
+  LEAK_DETECTED: "leak-detected",
+  MAX_ATTEMPTS_INCONCLUSIVE: "max-attempts-inconclusive",
+  MAX_SAMPLES_INCONCLUSIVE: "max-samples-inconclusive",
+  MAX_SAMPLES_NO_LEAK: "max-samples-no-leak",
+  SENSITIVITY_UNAVAILABLE: "sensitivity-unavailable",
+  WARMUP_FAILED: "warmup-failed",
+});
+
 export class DetectorConfigurationError extends TypeError {
   constructor(message) {
     super(message);
@@ -208,39 +221,39 @@ export async function runDetector({
   };
 
   if (signal?.aborted) {
-    return final("aborted");
+    return final(STOP_REASON.ABORTED);
   }
 
   const warmupLabels = prng.nextInt(0, 2) === 0 ? ["a", "b"] : ["b", "a"];
   for (const label of warmupLabels) {
     if (signal?.aborted) {
-      return final("aborted");
+      return final(STOP_REASON.ABORTED);
     }
     let result;
     try {
       result = await sendOne(label, requests[label], undefined);
     } catch {
-      return final("fatal-transport-error");
+      return final(STOP_REASON.FATAL_TRANSPORT_ERROR);
     }
     warmupRecords.push({ label, result });
     if (result?.kind === "aborted" || signal?.aborted) {
-      return final("aborted");
+      return final(STOP_REASON.ABORTED);
     }
     if (result?.kind !== "accepted" || statusOf(result) === null) {
       if (isTransportFailure(result)) {
         consecutiveFailures += 1;
       }
       if (consecutiveFailures >= config.maxConsecutiveFailures) {
-        return final("fatal-transport-error");
+        return final(STOP_REASON.FATAL_TRANSPORT_ERROR);
       }
-      return final("warmup-failed");
+      return final(STOP_REASON.WARMUP_FAILED);
     }
     consecutiveFailures = 0;
   }
 
   const warmupStatuses = warmupRecords.map(({ result }) => statusOf(result));
   if (warmupStatuses[0] !== warmupStatuses[1]) {
-    return final("baseline-status-mismatch");
+    return final(STOP_REASON.BASELINE_STATUS_MISMATCH);
   }
   expectedStatus = warmupStatuses[0];
 
@@ -249,25 +262,25 @@ export async function runDetector({
   while (samples.a.length < config.maxValidPerGroup
     || samples.b.length < config.maxValidPerGroup) {
     if (signal?.aborted) {
-      return final("aborted");
+      return final(STOP_REASON.ABORTED);
     }
     if (counts.a.attempts + counts.b.attempts + 2 > config.maxAttempts) {
-      return final("max-attempts-inconclusive");
+      return final(STOP_REASON.MAX_ATTEMPTS_INCONCLUSIVE);
     }
 
     const labels = prng.nextInt(0, 2) === 0 ? ["a", "b"] : ["b", "a"];
     for (const label of labels) {
       if (signal?.aborted) {
-        return final("aborted");
+        return final(STOP_REASON.ABORTED);
       }
       let result;
       try {
         result = await sendOne(label, requests[label], expectedStatus);
       } catch {
-        return final("fatal-transport-error");
+        return final(STOP_REASON.FATAL_TRANSPORT_ERROR);
       }
       if (result?.kind === "aborted" || signal?.aborted) {
-        return final("aborted");
+        return final(STOP_REASON.ABORTED);
       }
       recordResult(counts[label], result, samples[label]);
       if (isTransportFailure(result)) {
@@ -276,7 +289,7 @@ export async function runDetector({
         consecutiveFailures = 0;
       }
       if (consecutiveFailures >= config.maxConsecutiveFailures) {
-        return final("fatal-transport-error");
+        return final(STOP_REASON.FATAL_TRANSPORT_ERROR);
       }
     }
 
@@ -290,7 +303,7 @@ export async function runDetector({
       }
     }
     if (!roundQuality.passes) {
-      return final("data-quality-failure");
+      return final(STOP_REASON.DATA_QUALITY_FAILURE);
     }
 
     const validA = samples.a.length;
@@ -329,18 +342,18 @@ export async function runDetector({
     });
 
     if (!inference.quality.passes) {
-      return final("data-quality-failure", VERDICT.INCONCLUSIVE, null);
+      return final(STOP_REASON.DATA_QUALITY_FAILURE, VERDICT.INCONCLUSIVE, null);
     }
     if (inference.sensitivity?.available === false) {
-      return final("sensitivity-unavailable", VERDICT.INCONCLUSIVE, null);
+      return final(STOP_REASON.SENSITIVITY_UNAVAILABLE, VERDICT.INCONCLUSIVE, null);
     }
     if (inference.verdict === VERDICT.LEAK) {
-      return final("leak-detected", VERDICT.LEAK, inference.sensitivityMs);
+      return final(STOP_REASON.LEAK_DETECTED, VERDICT.LEAK, inference.sensitivityMs);
     }
     if (inference.verdict === VERDICT.NO_LEAK_DETECTED) {
-      return final("max-samples-no-leak", VERDICT.NO_LEAK_DETECTED, inference.sensitivityMs);
+      return final(STOP_REASON.MAX_SAMPLES_NO_LEAK, VERDICT.NO_LEAK_DETECTED, inference.sensitivityMs);
     }
   }
 
-  return final("max-samples-inconclusive", VERDICT.INCONCLUSIVE, lastSensitivityMs);
+  return final(STOP_REASON.MAX_SAMPLES_INCONCLUSIVE, VERDICT.INCONCLUSIVE, lastSensitivityMs);
 }
