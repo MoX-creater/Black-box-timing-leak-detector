@@ -79,7 +79,7 @@ function errorResult(error) {
   return { errorCode: safeErrorCode(error), kind: "discarded", reason };
 }
 
-function requestOptions(request, dispatcher, timeoutMs) {
+function requestOptions(request, dispatcher, signal, timeoutMs) {
   const options = {
     body: request.body,
     headers: request.headers,
@@ -87,6 +87,9 @@ function requestOptions(request, dispatcher, timeoutMs) {
   };
   if (dispatcher !== undefined) {
     options.dispatcher = dispatcher;
+  }
+  if (signal !== undefined) {
+    options.signal = signal;
   }
   if (timeoutMs !== undefined) {
     options.bodyTimeout = timeoutMs;
@@ -104,6 +107,7 @@ export async function sendHttpRequest(request, {
   dispatcher,
   expectedStatus,
   requestFn = undiciRequest,
+  signal,
   timeoutMs,
 } = {}) {
   validateRequest(request);
@@ -118,7 +122,7 @@ export async function sendHttpRequest(request, {
 
   const start = clock.now();
   try {
-    const response = await requestFn(request.url, requestOptions(request, dispatcher, timeoutMs));
+    const response = await requestFn(request.url, requestOptions(request, dispatcher, signal, timeoutMs));
     await consumeBody(response.body);
     const end = clock.now();
     return statusResult(response.statusCode, expectedStatus, clock.elapsedMilliseconds(start, end));
@@ -141,6 +145,7 @@ export function createHttpTransport({
       dispatcher: options.dispatcher ?? dispatcher,
       expectedStatus: options.expectedStatus,
       requestFn,
+      signal: options.signal,
       timeoutMs: options.timeoutMs ?? timeoutMs,
     }),
   };

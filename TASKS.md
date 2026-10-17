@@ -100,7 +100,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-02
 
-### T1.11 — [Must-have] Implement seeded sensitivity, adaptive stopping, and the detector loop.
+### [x] T1.11 — [Must-have] Implement seeded sensitivity, adaptive stopping, and the detector loop.
 
 - **Description:** Combine paired randomized rounds, bootstrap MDE, quality gates, stop reasons, and `LEAK`/`NO LEAK DETECTED`/`INCONCLUSIVE` decisions.
 - **Acceptance:** `node --test test/detector.test.js test/inference.test.js` proves seeded interleaving, discard accounting, stable sensitivity for a fixture, early leak stopping, negative-at-sensitivity behavior, and inconclusive insufficient/invalid-data behavior; all rule inputs are reported.

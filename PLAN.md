@@ -103,11 +103,16 @@ expires completed reports; it does not create scan history.
 ### Sampling and observations
 
 1. Validate the run configuration, create a seeded PRNG, and record the seed.
-2. Execute one A/B warmup pair; record but exclude it from inference.
+2. Execute exactly one A/B warmup pair; `warmupPairs` is not configurable.
+   Send warmup requests without an expected status. The transport classifies a
+   2xx response as accepted and errors, timeouts, redirects, and other statuses
+   as discarded. Record the warmup attempts, but exclude them from inference.
 3. For each measured round, draw the order of `[A, B]` from the PRNG and send
    requests sequentially through the same transport settings.
-4. Record monotonic duration only for a response whose body was fully consumed
-   and whose status matches the established expected status.
+4. After both warmup responses are accepted, require their status codes to
+   match and use that status as the expected measured-request baseline. Record
+   monotonic duration only for a measured response whose body was fully
+   consumed and whose status matches that baseline.
 5. Record every attempt as accepted, request error/timeout, unexpected status,
    or status mismatch, split by A/B. Never substitute or impute discarded
    durations.
@@ -135,9 +140,14 @@ Use a seeded nonparametric bootstrap of the accepted A and B samples:
 for each bootstrap replicate:
   resample A and B independently with replacement
   d* = Qq(A*) - Qq(B*)
-SEq = standard deviation(d*)
+SEq = sample standard deviation(d*) using replicates - 1
 MDE_ms = (z_(1-alpha_look/2) + z_(target_power)) * SEq
 ```
+
+If there are fewer than two bootstrap replicates, or `SEq` is zero or
+non-finite, sensitivity is unavailable and the run is `INCONCLUSIVE` with
+stop reason `sensitivity-unavailable`. Bootstrap draws use a fixed,
+domain-separated `bootstrap` seed stream derived from the run seed.
 
 `MDE_ms` is the report's run-specific sensitivity. The report must include the
 bootstrap method, seed stream, sample counts, look alpha, target power, and
@@ -147,8 +157,7 @@ configuration values still awaiting benchmark/implementation selection; they
 must not be presented as measured facts.
 
 This is an operational approximation for a low-quantile effect, not a universal
-claim about the endpoint. If bootstrap uncertainty is unstable, the detector
-returns `INCONCLUSIVE` rather than displaying a made-up sensitivity.
+claim about the endpoint.
 
 ### Adaptive stopping and verdict calculation
 
