@@ -84,7 +84,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-04, FR-05, FR-10
 
-### T1.9 — [Must-have] Implement the undici transport and attempt classification.
+### [x] T1.9 — [Must-have] Implement the undici transport and attempt classification.
 
 - **Description:** Measure request duration around a fully consumed response and classify accepted, error, timeout, unexpected-status, and mismatch outcomes.
 - **Acceptance:** `node --test test/http-transport.test.js` uses a local fake server/clock to verify monotonic duration, body consumption, timeout/error causes, status classification, and no live-network dependency.
