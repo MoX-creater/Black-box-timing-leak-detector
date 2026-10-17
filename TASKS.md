@@ -142,7 +142,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-06, FR-08
 
-### T2.4 — [Must-have] Wire real demo services into Compose and healthchecks.
+### [x] T2.4 — [Must-have] Wire real demo services into Compose and healthchecks.
 
 - **Description:** Replace stubs with vulnerable/fixed services and configure the web process to use only their internal service names and ports.
 - **Acceptance:** `docker compose up --build -d` starts all services; healthchecks pass; a request from the web container reaches both demos; host access to demo ports fails; `docker compose down -v` removes the stack.

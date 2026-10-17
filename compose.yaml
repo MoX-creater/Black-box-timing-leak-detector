@@ -4,6 +4,10 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      DEMO_FIXED_HOST: fixed
+      DEMO_FIXED_PORT: "3002"
+      DEMO_VULNERABLE_HOST: vulnerable
+      DEMO_VULNERABLE_PORT: "3001"
       HOST: 0.0.0.0
       PORT: "3000"
     ports:
@@ -33,6 +37,8 @@ services:
       dockerfile: Dockerfile
     command: ["node", "src/demos/stub.js"]
     environment:
+      DEMO_NOISE_PRESET: none
+      DEMO_NOISE_SEED: demo-noise-seed
       HOST: 0.0.0.0
       PORT: "3001"
       SERVICE_NAME: vulnerable
@@ -58,6 +64,8 @@ services:
       dockerfile: Dockerfile
     command: ["node", "src/demos/stub.js"]
     environment:
+      DEMO_NOISE_PRESET: none
+      DEMO_NOISE_SEED: demo-noise-seed
       HOST: 0.0.0.0
       PORT: "3002"
       SERVICE_NAME: fixed

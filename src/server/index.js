@@ -4,10 +4,11 @@ import { fileURLToPath } from "node:url";
 import { createWebApp } from "./app.js";
 
 export function startWebServer({
+  environment = process.env,
   host = process.env.HOST ?? "0.0.0.0",
   port = Number(process.env.PORT ?? 3000),
 } = {}) {
-  return createWebApp().listen(port, host);
+  return createWebApp({ environment }).listen(port, host);
 }
 
 function isDirectRun() {

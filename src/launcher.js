@@ -3,6 +3,17 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const sourceDirectory = path.dirname(fileURLToPath(import.meta.url));
+const NOISE_ENVIRONMENT_PREFIX = "DEMO_NOISE_";
+const DEFAULT_NOISE_ENVIRONMENT = Object.freeze({
+  DEMO_NOISE_PRESET: "none",
+  DEMO_NOISE_SEED: "demo-noise-seed",
+});
+
+function withoutNoiseEnvironment(environment) {
+  return Object.fromEntries(
+    Object.entries(environment).filter(([key]) => !key.startsWith(NOISE_ENVIRONMENT_PREFIX)),
+  );
+}
 
 function parsePort(value, name) {
   const port = Number(value);
@@ -24,26 +35,53 @@ function childSpec(name, entrypoint, port, environment) {
   };
 }
 
+export function buildStackSpecs(environment = process.env) {
+  const webPort = parsePort(environment.PORT ?? "3000", "PORT");
+  const demoEnvironment = {
+    ...environment,
+    ...DEFAULT_NOISE_ENVIRONMENT,
+    DEMO_NOISE_JITTER: environment.DEMO_NOISE_JITTER,
+    HOST: "127.0.0.1",
+  };
+  if (environment.DEMO_NOISE_PRESET !== undefined) {
+    demoEnvironment.DEMO_NOISE_PRESET = environment.DEMO_NOISE_PRESET;
+  }
+  if (environment.DEMO_NOISE_SEED !== undefined) {
+    demoEnvironment.DEMO_NOISE_SEED = environment.DEMO_NOISE_SEED;
+  }
+  if (environment.DEMO_NOISE_JITTER === undefined) {
+    delete demoEnvironment.DEMO_NOISE_JITTER;
+  }
+  const webEnvironment = {
+    ...withoutNoiseEnvironment(environment),
+    DEMO_FIXED_HOST: "127.0.0.1",
+    DEMO_FIXED_PORT: "3002",
+    DEMO_VULNERABLE_HOST: "127.0.0.1",
+    DEMO_VULNERABLE_PORT: "3001",
+    HOST: environment.HOST ?? "0.0.0.0",
+  };
+  const specs = [
+    childSpec("vulnerable", "demos/stub.js", 3001, {
+      ...demoEnvironment,
+      SERVICE_NAME: "vulnerable",
+    }),
+    childSpec("fixed", "demos/stub.js", 3002, {
+      ...demoEnvironment,
+      SERVICE_NAME: "fixed",
+    }),
+    childSpec("web", "server/index.js", webPort, {
+      ...webEnvironment,
+    }),
+  ];
+  return specs;
+}
+
 export function startStack({
   environment = process.env,
   spawnProcess = spawn,
   stdio = "inherit",
 } = {}) {
-  const webPort = parsePort(environment.PORT ?? "3000", "PORT");
-  const specs = [
-    childSpec("vulnerable", "demos/stub.js", 3001, {
-      ...environment,
-      SERVICE_NAME: "vulnerable",
-    }),
-    childSpec("fixed", "demos/stub.js", 3002, {
-      ...environment,
-      SERVICE_NAME: "fixed",
-    }),
-    childSpec("web", "server/index.js", webPort, {
-      ...environment,
-      HOST: environment.HOST ?? "0.0.0.0",
-    }),
-  ];
+  const specs = buildStackSpecs(environment);
   const children = [];
   let shuttingDown = false;
   let exitCode = 0;
