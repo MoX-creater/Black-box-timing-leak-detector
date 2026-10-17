@@ -65,6 +65,7 @@ Run commands from the repository root. Keep `npm test` offline-capable after `np
 
 ## Git rules
 - Make small, focused commits with one task per commit and conventional messages (`feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`).
+- Files must be committed as 100644; run `git update-index --chmod=-x` on new files before committing.
 - Do not commit secrets, generated noise, or unrelated edits; inspect status and diff before committing.
 
 ## Ask before doing
