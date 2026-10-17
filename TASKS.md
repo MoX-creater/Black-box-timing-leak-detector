@@ -150,7 +150,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-06, FR-09, FR-10
 
-### T2.5 — [Must-have] Connect the minimal CLI command to the detector.
+### [x] T2.5 — [Must-have] Connect the minimal CLI command to the detector.
 
 - **Description:** Add the CLI entrypoint that loads config, applies flags, runs the detector, prints a redacted JSON report, and maps verdict/runtime exit codes.
 - **Acceptance:** `npm run detect -- --config test/fixtures/local.json` completes against a local fake/demo target; the non-localhost fixture fails without `--i-am-authorized`; authorized execution prints the warning and emits valid JSON; `npm test` passes.

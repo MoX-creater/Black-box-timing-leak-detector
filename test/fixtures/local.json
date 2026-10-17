@@ -1,0 +1,54 @@
+{
+  "defaultsStatus": "TBD",
+  "method": "POST",
+  "headers": {
+    "content-type": "application/json",
+    "x-fixture-secret": "$CLI_TEST_HEADER"
+  },
+  "cookies": {
+    "fixture": "$CLI_TEST_COOKIE"
+  },
+  "a": {
+    "url": "http://127.0.0.1:1/login",
+    "body": {
+      "type": "json",
+      "value": {
+        "username": "known-user",
+        "password": "fixture-password-secret"
+      }
+    }
+  },
+  "b": {
+    "url": "http://127.0.0.1:1/login",
+    "body": {
+      "type": "json",
+      "value": {
+        "username": "missing-user",
+        "password": "fixture-password-secret"
+      }
+    }
+  },
+  "seed": "local-fixture-seed",
+  "detector": {
+    "alphaTotal": 0.05,
+    "bootstrapReplicates": 20,
+    "lookBatchPerGroup": 2,
+    "materialDiscardRateDifference": 0.2,
+    "maxAttempts": 6,
+    "maxConsecutiveFailures": 3,
+    "maxDiscardRate": 0.5,
+    "maxValidPerGroup": 2,
+    "minAttemptsForDiscardRate": 2,
+    "minValidPerGroup": 2,
+    "quantile": 0.1,
+    "targetPower": 0.8
+  },
+  "requestTemplateIds": {
+    "a": "known-user",
+    "b": "missing-user"
+  },
+  "target": {
+    "id": "local-fixture",
+    "kind": "demo"
+  }
+}

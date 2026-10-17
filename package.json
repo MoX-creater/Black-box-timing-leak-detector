@@ -8,6 +8,7 @@
     "npm": "10.9.9"
   },
   "scripts": {
+    "detect": "node src/cli/index.js",
     "dev": "node --watch src/server/index.js",
     "test": "node --test",
     "bench": "node bench/run.js"
