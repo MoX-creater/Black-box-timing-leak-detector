@@ -179,7 +179,7 @@ change; never combine unrelated tasks in one commit.
 ### T3.1 — [Must-have] Implement the demo-only target API and start validation.
 
 - **Description:** Expose target/noise metadata and accept scan starts only by allowlisted internal IDs.
-- **Acceptance:** `node --test test/api-targets.test.js` proves `/api/targets` returns no URLs, unknown IDs and extra URL fields are rejected, valid starts return `202`, and `/healthz` stays local-only.
+- **Acceptance:** `node --test test/api-targets.test.js` proves `/api/targets` returns no URLs, unknown IDs and extra URL fields are rejected, valid starts return `202`, and `/healthz` returns only a static readiness response and never probes or accepts a destination.
 - **Dependencies:** T2.4, T2.7
 - **Estimate:** M
 - **Linked PRD:** FR-07, FR-10

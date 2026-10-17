@@ -279,11 +279,13 @@ transport fields. A proposed schema is:
   },
   "b": {
     "url": "https://authorized.example/login",
-    "body": {"type": "form", "value": {"username": "missing", "password": "x"}}
+    "body": {"type": "json", "value": {"username": "missing", "password": "x"}}
   },
   "seed": "benchmark-seed"
 }
 ```
+
+A and B must share method, body type, header set and URL path; only body field values (the identity) may differ. The request builder rejects mismatched pairs and warns when body lengths differ by more than 8 bytes.
 
 `--method` overrides the common method. Each `--header` and `--cookie` adds or
 overrides one common value. `--body` is a common raw override; its encoding
