@@ -92,7 +92,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-03, FR-05
 
-### T1.10 — [Must-have] Implement tested statistical primitives.
+### [x] T1.10 — [Must-have] Implement tested statistical primitives.
 
 - **Description:** Add percentile interpolation, tie-aware Mann-Whitney U, low-percentile signed/absolute effect, and stable result schemas.
 - **Acceptance:** `node --test test/stats.test.js` matches committed known reference values for U, p-value, percentiles, ties, and effect size; invalid/empty samples fail explicitly; `npm test` passes.
