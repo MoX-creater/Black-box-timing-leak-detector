@@ -48,7 +48,7 @@ test("web entrypoint serves a health response", async () => {
 
 test("stub entrypoint serves a named health response", async () => {
   await assertHealth(
-    (options) => startStubServer({ ...options, serviceName: "stub" }),
+    (options) => startStubServer({ ...options, mode: "fixed", serviceName: "stub" }),
     { service: "stub", status: "ok" },
   );
 });

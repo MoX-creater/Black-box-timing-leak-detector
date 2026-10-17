@@ -126,7 +126,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-06
 
-### T2.2 — [Must-have] Implement vulnerable and fixed demo processes.
+### [x] T2.2 — [Must-have] Implement vulnerable and fixed demo processes.
 
 - **Description:** Make the vulnerable app skip the hash only for nonexistent users and make the fixed app run a dummy scrypt hash for both cases.
 - **Acceptance:** `node --test test/demos.test.js` proves the vulnerable hasher call count differs by account existence, the fixed call count is equal for A/B, responses remain equivalent, and source contains no sleep-based delay.
