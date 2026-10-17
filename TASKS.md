@@ -68,7 +68,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** S
 - **Linked PRD:** FR-01, FR-08
 
-### T1.7 — [Must-have] Implement request-template validation and body/header/cookie construction.
+### [x] T1.7 — [Must-have] Implement request-template validation and body/header/cookie construction.
 
 - **Description:** Parse A/B JSON templates and support common method, repeatable headers, cookies, JSON bodies, and form bodies without losing A/B differences.
 - **Acceptance:** `node --test test/request-builder.test.js` verifies JSON and form serialization, repeatable overrides, cookie formatting, method override, and distinct A/B payloads; malformed input fails before networking.
