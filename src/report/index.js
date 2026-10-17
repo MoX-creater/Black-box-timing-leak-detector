@@ -33,7 +33,14 @@ const DETECTOR_CONFIG_FIELDS = [
   "targetPower",
 ];
 
-const NOISE_FIELDS = ["jitter", "presetId", "seed"];
+const NOISE_FIELDS = [
+  "benchmarkStatus",
+  "jitter",
+  "presetId",
+  "seed",
+  "spikeMultiplier",
+  "spikeProbability",
+];
 const VERDICTS = new Set(Object.values(VERDICT));
 const STOP_REASONS = new Set(Object.values(STOP_REASON));
 const SENSITIVITY_REASONS = new Set([
@@ -427,6 +434,23 @@ function validateConfiguration(configuration) {
   if ("seed" in configuration.noise) {
     requireSeed(configuration.noise.seed, "report.configuration.noise.seed");
   }
+  if ("benchmarkStatus" in configuration.noise) {
+    requireString(configuration.noise.benchmarkStatus, "report.configuration.noise.benchmarkStatus");
+  }
+  if ("spikeMultiplier" in configuration.noise) {
+    requireNonNegativeInteger(
+      configuration.noise.spikeMultiplier,
+      "report.configuration.noise.spikeMultiplier",
+    );
+  }
+  if ("spikeProbability" in configuration.noise) {
+    requireFiniteNumber(
+      configuration.noise.spikeProbability,
+      "report.configuration.noise.spikeProbability",
+      0,
+      1,
+    );
+  }
 }
 
 function validateObservation(observation, configuration) {
@@ -556,11 +580,20 @@ function copyNoiseConfig(noise) {
   requireObject(noise, "noise");
   requireExactKeys(noise, NOISE_FIELDS, "noise");
   const output = { presetId: noise.presetId };
+  if ("benchmarkStatus" in noise) {
+    output.benchmarkStatus = noise.benchmarkStatus;
+  }
   if ("jitter" in noise) {
     output.jitter = noise.jitter;
   }
   if ("seed" in noise) {
     output.seed = noise.seed;
+  }
+  if ("spikeMultiplier" in noise) {
+    output.spikeMultiplier = noise.spikeMultiplier;
+  }
+  if ("spikeProbability" in noise) {
+    output.spikeProbability = noise.spikeProbability;
   }
   return output;
 }

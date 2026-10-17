@@ -11,6 +11,10 @@ import {
   LOGIN_SUCCESS_BODY,
   LOGIN_SUCCESS_STATUS,
 } from "./auth.js";
+import {
+  createNoiseMiddleware,
+  resolveNoiseConfigFromEnvironment,
+} from "./noise.js";
 
 export const DEMO_MODE = Object.freeze({
   FIXED: "fixed",
@@ -65,12 +69,15 @@ function resolveMode(mode, serviceName) {
 export function createDemoApp({
   hashPasswordFn,
   mode,
+  noiseConfig = resolveNoiseConfigFromEnvironment(),
+  noiseWorkFn,
   serviceName = process.env.SERVICE_NAME ?? mode ?? "demo",
   scryptFn,
   timingSafeEqualFn,
   userStore = defaultUserStore,
 } = {}) {
   const resolvedMode = resolveMode(mode, serviceName);
+  const noiseMiddleware = createNoiseMiddleware(noiseConfig, { work: noiseWorkFn });
   const authenticate = Promise.resolve(userStore).then((store) => createDemoAuthenticator({
     hashPasswordFn,
     skipMissingUserHash: resolvedMode === DEMO_MODE.VULNERABLE,
@@ -79,6 +86,7 @@ export function createDemoApp({
     userStore: store,
   }));
   const app = express();
+  app.locals.noiseConfig = noiseMiddleware.noiseConfig;
   app.disable("x-powered-by");
   app.set("etag", false);
   app.use(express.json({ limit: JSON_BODY_LIMIT, strict: true }));
@@ -87,7 +95,7 @@ export function createDemoApp({
     sendSerialized(response, 200, JSON.stringify({ service: serviceName, status: "ok" }));
   });
 
-  app.post("/login", async (request, response, next) => {
+  app.post("/login", noiseMiddleware, async (request, response, next) => {
     try {
       const result = await (await authenticate)(request.body);
       sendSerialized(response, result.statusCode, result.body);
@@ -108,6 +116,8 @@ export function startStubServer({
   hashPasswordFn,
   host = process.env.HOST ?? "0.0.0.0",
   mode,
+  noiseConfig,
+  noiseWorkFn,
   port = Number(process.env.PORT ?? 3001),
   serviceName = process.env.SERVICE_NAME ?? mode ?? "demo",
   scryptFn,
@@ -117,6 +127,8 @@ export function startStubServer({
   const app = createDemoApp({
     hashPasswordFn,
     mode,
+    noiseConfig,
+    noiseWorkFn,
     serviceName,
     scryptFn,
     timingSafeEqualFn,

@@ -133,6 +133,28 @@ test("creates a split, redacted report and round-trips JSON", async () => {
   assert.deepEqual(validateRunReport(JSON.parse(serialized)), JSON.parse(serialized));
 });
 
+test("preserves heavy-tail noise configuration in the report", async () => {
+  const report = await validReport({
+    noise: {
+      benchmarkStatus: "TBD",
+      jitter: 8_000,
+      presetId: "high",
+      seed: "noise-seed",
+      spikeMultiplier: 8,
+      spikeProbability: 0.05,
+    },
+  });
+
+  assert.deepEqual(report.configuration.noise, {
+    benchmarkStatus: "TBD",
+    jitter: 8_000,
+    presetId: "high",
+    seed: "noise-seed",
+    spikeMultiplier: 8,
+    spikeProbability: 0.05,
+  });
+});
+
 test("requires accepted to equal each sample array length", async () => {
   const report = await validReport();
   report.observation.samples.a.pop();

@@ -134,7 +134,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-06
 
-### T2.3 — [Must-have] Implement seeded real-work noise middleware and named presets.
+### [x] T2.3 — [Must-have] Implement seeded real-work noise middleware and named presets.
 
 - **Description:** Add PRNG-driven bounded hash work with configurable noise settings while preserving the demo's real-work distinction.
 - **Acceptance:** `node --test test/noise.test.js` proves the same seed/config produces the same work sequence, each preset is serializable as configuration, and `rg 'Math\.random|sleep\(' src/demos` returns no matches.
