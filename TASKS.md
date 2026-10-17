@@ -76,7 +76,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-03, FR-04
 
-### T1.8 — [Must-have] Implement the CLI authorization gate and redaction primitives.
+### [x] T1.8 — [Must-have] Implement the CLI authorization gate and redaction primitives.
 
 - **Description:** Reject non-localhost URLs without `--i-am-authorized`, warn before requests when authorized, allow the localhost exception, and redact sensitive metadata.
 - **Acceptance:** `node --test test/authorization.test.js` proves non-localhost requests make zero transport calls without the flag, authorized runs emit a warning to stderr, localhost runs do not require it, and reports/logs omit cookie/body secrets.
