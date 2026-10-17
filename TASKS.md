@@ -118,7 +118,7 @@ change; never combine unrelated tasks in one commit.
 
 ## Day 2 — Demo services, CLI flow, and benchmarks
 
-### T2.1 — [Must-have] Define the shared demo authentication contract and scrypt helper.
+### [x] T2.1 — [Must-have] Define the shared demo authentication contract and scrypt helper.
 
 - **Description:** Create the same login-shaped request/response contract for both demos and an injectable `node:crypto` scrypt password-work helper.
 - **Acceptance:** `node --test test/demo-contract.test.js` verifies existing and nonexistent requests have the same successful status and response shape; the helper is exercised through an injected fake in tests; no `sleep()` is used.
