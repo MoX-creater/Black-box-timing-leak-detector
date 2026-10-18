@@ -56,12 +56,12 @@ async function makeConfig(directory, fixturePath, port) {
   return filePath;
 }
 
-function runNpmDetect(args, environment = {}) {
-  const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+function runNodeDetect(args, environment = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(npmCommand, ["run", "--silent", "detect", "--", ...args], {
+    const child = spawn(process.execPath, ["src/cli/index.js", ...args], {
       cwd: ROOT,
       env: { ...process.env, ...environment },
+      shell: false,
       stdio: ["ignore", "pipe", "pipe"],
     });
     let stdout = "";
@@ -91,7 +91,7 @@ test("local fixture runs against a test-started demo and emits only a redacted J
   try {
     const configPath = await makeConfig(directory, LOCAL_FIXTURE, port);
     await writeFile(cookieFile, "fixture=cookie-file-secret\n", "utf8");
-    const result = await runNpmDetect([
+    const result = await runNodeDetect([
       "--config", configPath,
       "--cookie-file", cookieFile,
       "--header", "x-command-secret: header-command-secret",
@@ -130,7 +130,7 @@ test("--out keeps stdout empty, writes atomically, refuses overwrite, and --forc
   try {
     const configPath = await makeConfig(directory, LOCAL_FIXTURE, port);
     const reportPath = path.join(directory, "report.json");
-    const first = await runNpmDetect(["--config", configPath, "--out", reportPath], {
+    const first = await runNodeDetect(["--config", configPath, "--out", reportPath], {
       CLI_TEST_COOKIE: "cookie-config-secret",
       CLI_TEST_HEADER: "header-config-secret",
     });
@@ -140,7 +140,7 @@ test("--out keeps stdout empty, writes atomically, refuses overwrite, and --forc
     const reportText = await readFile(reportPath, "utf8");
     assert.equal(JSON.parse(reportText).schemaVersion, "1.0");
 
-    const refused = await runNpmDetect(["--config", configPath, "--out", reportPath], {
+    const refused = await runNodeDetect(["--config", configPath, "--out", reportPath], {
       CLI_TEST_COOKIE: "cookie-config-secret",
       CLI_TEST_HEADER: "header-config-secret",
     });
@@ -148,7 +148,7 @@ test("--out keeps stdout empty, writes atomically, refuses overwrite, and --forc
     assert.equal(refused.stdout, "");
     assert.equal(refused.stderr.trim(), "Input error");
 
-    const forced = await runNpmDetect(["--config", configPath, "--out", reportPath, "--force"], {
+    const forced = await runNodeDetect(["--config", configPath, "--out", reportPath, "--force"], {
       CLI_TEST_COOKIE: "cookie-config-secret",
       CLI_TEST_HEADER: "header-config-secret",
     });
@@ -162,7 +162,7 @@ test("--out keeps stdout empty, writes atomically, refuses overwrite, and --forc
 });
 
 test("help documents body omission and shell-history risk without echoing values", async () => {
-  const result = await runNpmDetect(["--help"]);
+  const result = await runNodeDetect(["--help"]);
 
   assert.equal(result.code, 0);
   assert.match(result.stdout, /--body is not supported/);
@@ -172,7 +172,7 @@ test("help documents body omission and shell-history risk without echoing values
 });
 
 test("--body is rejected as an input error and its value is not echoed", async () => {
-  const result = await runNpmDetect(["--body", "body-command-secret"]);
+  const result = await runNodeDetect(["--body", "body-command-secret"]);
 
   assert.equal(result.code, 1);
   assert.equal(result.stdout, "");
