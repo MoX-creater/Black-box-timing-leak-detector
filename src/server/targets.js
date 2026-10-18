@@ -13,6 +13,10 @@ const TARGET_ENVIRONMENT_FIELDS = Object.freeze({
 });
 
 const TARGET_IDS = Object.freeze(["fixed", "vulnerable"]);
+const PUBLIC_TARGET_LABELS = Object.freeze({
+  fixed: "Fixed demo",
+  vulnerable: "Vulnerable demo",
+});
 const HOST_PATTERN = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*$/i;
 
 function invalid(message) {
@@ -95,4 +99,9 @@ export function createTargetMapFromEnvironment(environment = process.env) {
   });
 }
 
-export { DEFAULT_TARGET_VALUES, TARGET_ENVIRONMENT_FIELDS, TARGET_IDS };
+export {
+  DEFAULT_TARGET_VALUES,
+  PUBLIC_TARGET_LABELS,
+  TARGET_ENVIRONMENT_FIELDS,
+  TARGET_IDS,
+};
