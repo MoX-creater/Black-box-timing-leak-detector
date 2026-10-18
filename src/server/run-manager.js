@@ -1,6 +1,7 @@
 import { createSeededPrng } from "../prng.js";
 import { buildRequests } from "../http/request.js";
 import { createNoiseConfig } from "../demos/noise.js";
+import { WEB_BUILD_INFO } from "./build-info.js";
 
 export const RUN_SEED_DOMAIN = "web-scan-run";
 export const SERVER_SCAN_SEED = "web-scan-seed";
@@ -624,6 +625,7 @@ export function createRunManager({
   activePerClient = DEFAULT_ACTIVE_PER_CLIENT,
   activeRuns,
   agentFactory = () => undefined,
+  buildInfo = WEB_BUILD_INFO,
   detectorRunner = defaultDetectorRunner,
   environment = process.env,
   maxRunDurationMs,
@@ -652,6 +654,11 @@ export function createRunManager({
   assertFunction(agentFactory, "agentFactory");
   assertFunction(transportFactory, "transportFactory");
   assertFunction(now, "now");
+  if (!buildInfo || typeof buildInfo !== "object"
+    || typeof buildInfo.buildVersion !== "string"
+    || typeof buildInfo.detectorVersion !== "string") {
+    throw new TypeError("buildInfo must contain buildVersion and detectorVersion strings");
+  }
   if (!scheduler || typeof scheduler !== "object") {
     throw new TypeError("scheduler must be an object");
   }
@@ -933,10 +940,10 @@ export function createRunManager({
 
       try {
         const report = await reportBuilder({
-          buildVersion: "web-0.1.0",
+          buildVersion: buildInfo.buildVersion,
           detectorConfig: { ...WEB_DETECTOR_CONFIG, seed: record.seed },
           detectorResult,
-          detectorVersion: "detector-0.1.0",
+          detectorVersion: buildInfo.detectorVersion,
           endedAt: timestampFrom(currentTime),
           noise: record.noise,
           requestMetadata: record.requests,
@@ -1074,6 +1081,15 @@ export function createRunManager({
     sweep();
     const record = runs.get(runId) ?? retained.get(runId);
     return record ? copyPublicRecord(record) : null;
+  }
+
+  function getReport(runId) {
+    sweep();
+    const record = runs.get(runId) ?? retained.get(runId);
+    if (!record || record.status !== "complete" || !record.report) {
+      return null;
+    }
+    return structuredClone(record.report);
   }
 
   function getSnapshot(runId) {
@@ -1231,6 +1247,7 @@ export function createRunManager({
     close: shutdown,
     disconnect,
     get,
+    getReport,
     getSnapshot,
     histogramBinLimit: HISTOGRAM_BIN_LIMIT,
     limiterKeyCount: () => rateLimiter.keyCount(),

@@ -379,6 +379,26 @@ test("polling and late SSE attachment expose the approved public event contract"
     assert.equal(snapshot.verdict, "LEAK");
     assert.equal(sumBins(snapshot.histograms.a), 2);
     assert.equal(sumBins(snapshot.histograms.b), 2);
+    const reportResponse = await request(`${url}/api/scans/${run.runId}/report`);
+    assert.equal(reportResponse.statusCode, 200);
+    assert.equal(reportResponse.headers["cache-control"], "no-store");
+    assert.match(reportResponse.headers["content-type"], /^application\/json; charset=utf-8/);
+    assert.match(
+      reportResponse.headers["content-disposition"],
+      /attachment; filename=timing-scan-run-0001\.json/,
+    );
+    assert.deepEqual(await reportResponse.body.json(), publicReport("LEAK"));
+
+    const missingReport = await request(`${url}/api/scans/run-9999/report`);
+    assert.equal(missingReport.statusCode, 404);
+    assert.deepEqual(await missingReport.body.json(), {
+      error: { code: "run-not-found", message: "Scan run was not found" },
+    });
+    const invalidReport = await request(`${url}/api/scans/not-a-run/report`);
+    assert.equal(invalidReport.statusCode, 400);
+    assert.deepEqual(await invalidReport.body.json(), {
+      error: { code: "invalid-run-id", message: "Scan ID is invalid" },
+    });
     const serialized = JSON.stringify(snapshot);
     for (const forbidden of ["web-scan-run", "127.0.0.1", "3001", "demo-password"]) {
       assert.equal(serialized.includes(forbidden), false, `found ${forbidden}`);
@@ -407,6 +427,50 @@ test("polling and late SSE attachment expose the approved public event contract"
     assert.equal(missing.statusCode, 404);
     assert.deepEqual(await missing.body.json(), {
       error: { code: "run-not-found", message: "Scan run was not found" },
+    });
+  } finally {
+    await closeServer(server);
+  }
+});
+
+test("report downloads return a fixed 410 envelope after retention expiry", async () => {
+  const clock = createFakeClock();
+  const { server, url } = await startApiServer({
+    managerOptions: {
+      detectorRunner: async ({ config }) => detectorFixture(config.seed),
+      now: clock.now,
+      reportRetentionMs: 10,
+      reportBuilder: async () => publicReport(),
+      reportValidator: () => {},
+      scheduler: clock.scheduler,
+      transportFactory: () => ({
+        send: async () => ({ durationMs: 1, kind: "accepted", statusCode: 200 }),
+      }),
+    },
+  });
+  try {
+    const start = await request(`${url}/api/scans`, {
+      body: JSON.stringify({ noisePresetId: "none", targetId: "vulnerable" }),
+      headers: { "content-type": "application/json" },
+      method: "POST",
+    });
+    const run = await start.body.json();
+    let snapshot;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const snapshotResponse = await request(`${url}/api/scans/${run.runId}`);
+      snapshot = await snapshotResponse.body.json();
+      if (snapshot.status === "complete") {
+        break;
+      }
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+    assert.equal(snapshot.status, "complete");
+    clock.advance(10);
+
+    const expired = await request(`${url}/api/scans/${run.runId}/report`);
+    assert.equal(expired.statusCode, 410);
+    assert.deepEqual(await expired.body.json(), {
+      error: { code: "report-expired", message: "Scan report has expired" },
     });
   } finally {
     await closeServer(server);

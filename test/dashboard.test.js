@@ -97,6 +97,10 @@ class FakeElement {
   setAttribute(name, value) {
     this.attributes.set(name, value);
   }
+
+  removeAttribute(name) {
+    this.attributes.delete(name);
+  }
 }
 
 class FakeDocument {
@@ -124,6 +128,7 @@ class FakeDocument {
       "load-status",
       "noise-select",
       "progress-message",
+      "report-download",
       "run-button",
       "scan-form",
       "scan-status",
@@ -132,7 +137,11 @@ class FakeDocument {
       "verdict-badge",
       "warning-list",
     ]) {
-      const tagName = id.endsWith("select") ? "select" : id === "scan-form" ? "form" : "div";
+      const tagName = id.endsWith("select")
+        ? "select"
+        : id === "scan-form"
+          ? "form"
+          : id === "report-download" ? "a" : "div";
       this.elements.set(id, new FakeElement(tagName, id));
     }
     for (const prefix of ["attempts", "accepted", "discarded", "errors"]) {
@@ -264,6 +273,30 @@ test("static dashboard assets have CSP, safe headers, and explicit route isolati
       assert.equal(assetResponse.headers["x-content-type-options"], "nosniff");
       await assetResponse.body.text();
     }
+
+    const benchmarks = await request(`${url}/benchmarks`);
+    assert.equal(benchmarks.statusCode, 200);
+    assert.equal(benchmarks.headers["content-security-policy"], csp);
+    assert.equal(benchmarks.headers["x-content-type-options"], "nosniff");
+    const benchmarksHtml = await benchmarks.body.text();
+    assert.match(benchmarksHtml, /<script type="module" src="\/benchmarks\.js"><\/script>/);
+    assert.doesNotMatch(benchmarksHtml, /<script(?![^>]*\bsrc=)[^>]*>/i);
+    assert.doesNotMatch(benchmarksHtml, /\sstyle\s*=/i);
+
+    const benchmarkScript = await request(`${url}/benchmarks.js`);
+    assert.equal(benchmarkScript.statusCode, 200);
+    assert.equal(benchmarkScript.headers["content-security-policy"], csp);
+    assert.equal(benchmarkScript.headers["x-content-type-options"], "nosniff");
+    await benchmarkScript.body.text();
+
+    const benchmarkResults = await request(`${url}/bench/results.json`);
+    assert.equal(benchmarkResults.statusCode, 404);
+    assert.deepEqual(await benchmarkResults.body.json(), {
+      error: {
+        code: "benchmark-data-unavailable",
+        message: "Benchmark data is not available",
+      },
+    });
 
     const health = await request(`${url}/healthz`);
     assert.equal(health.statusCode, 200);
@@ -404,6 +437,11 @@ test("dashboard behavior sends only selected IDs and filters stale run events", 
   assert.equal(
     documentRef.getElementById("verdict-badge").textContent,
     "NO LEAK DETECTED (sensitivity >= 1.23 ms)",
+  );
+  assert.equal(documentRef.getElementById("report-download").hidden, false);
+  assert.equal(
+    documentRef.getElementById("report-download").attributes.get("href"),
+    "/api/scans/run-0001/report",
   );
   assert.match(
     documentRef.getElementById("side-channel-note").textContent,
@@ -581,6 +619,7 @@ test("dashboard renders SVG bars from progress and a completed snapshot without 
     (node) => node.attributes.get("class")?.includes("histogram-bar-b"),
   ).length, 1);
   assert.equal(documentRef.getElementById("evidence-sensitivity").textContent, "3.50 ms");
+  assert.equal(documentRef.getElementById("report-download").hidden, false);
 
   dashboard.destroy();
   const noSamplesPost = deferred();

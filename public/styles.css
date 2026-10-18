@@ -121,9 +121,21 @@ select:disabled {
 }
 
 button:focus-visible,
-select:focus-visible {
+select:focus-visible,
+a:focus-visible {
   outline: 0.2rem solid #91b9ff;
   outline-offset: 0.15rem;
+}
+
+.report-download {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.6rem;
+  background: #244a9b;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .status,
@@ -406,6 +418,21 @@ select:focus-visible {
 
 .warning-list li + li {
   margin-top: 0.4rem;
+}
+
+.panel h3 {
+  margin: 1.5rem 0 0.65rem;
+  font-size: 1rem;
+}
+
+.panel h4 {
+  margin: 1rem 0 0.55rem;
+  color: #33425e;
+  font-size: 0.95rem;
+}
+
+.panel section + section {
+  border-top: 1px solid #d8e0ee;
 }
 
 @media (min-width: 42rem) {

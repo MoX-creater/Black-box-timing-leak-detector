@@ -15,6 +15,7 @@ import {
   WEB_DETECTOR_CONFIG_STATUS,
 } from "../src/server/run-manager.js";
 import { createWebApp } from "../src/server/app.js";
+import { WEB_BUILD_INFO } from "../src/server/build-info.js";
 
 const TARGET_MAP = Object.freeze({
   fixed: Object.freeze({ host: "127.0.0.1", port: 3002 }),
@@ -324,8 +325,10 @@ test("completed reports expire and are never persistent history", async () => {
   const run = manager.start({ clientKey: "retention", noisePresetId: "none", targetId: "vulnerable" });
   await manager.waitFor(run.runId);
   assert.equal(manager.get(run.runId).status, "complete");
+  assert.deepEqual(manager.getReport(run.runId), manager.get(run.runId).report);
   clock.advance(10);
   assert.equal(manager.get(run.runId), null);
+  assert.equal(manager.getReport(run.runId), null);
   assert.equal(manager.activeCount(), 0);
   await manager.shutdown();
 });
@@ -407,6 +410,9 @@ test("one real local scan uses the shared HTTP dispatcher and produces a valid r
     const completed = manager.get(run.runId);
     assert.equal(completed.status, "complete");
     validateRunReport(completed.report);
+    validateRunReport(manager.getReport(run.runId));
+    assert.equal(completed.report.buildVersion, WEB_BUILD_INFO.buildVersion);
+    assert.equal(completed.report.detectorVersion, WEB_BUILD_INFO.detectorVersion);
     assert.equal(completed.report.configuration.target.id, "vulnerable");
     assert.equal(completed.report.configuration.detector.maxValidPerGroup, 8);
   } finally {

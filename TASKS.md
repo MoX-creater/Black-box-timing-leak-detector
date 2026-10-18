@@ -216,7 +216,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-01, FR-02, FR-05, FR-07
 
-### T3.6 — [Must-have] Add active JSON report download and the Benchmarks page.
+### [x] T3.6 — [Must-have] Add active JSON report download and the Benchmarks page.
 
 - **Description:** Serve the current run's redacted report and render real `bench/results.json` or its explicit unavailable state.
 - **Acceptance:** `GET /api/scans/:id/report` returns valid JSON with download headers during retention and no secrets; `/benchmarks` displays the unavailable state when results are absent and displays provenance/measured fields when real results exist.

@@ -1,4 +1,5 @@
 import express from "express";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import { createNoiseConfig } from "../demos/noise.js";
@@ -22,6 +23,7 @@ const API_ERROR_MESSAGES = Object.freeze({
   "invalid-run-id": "Scan ID is invalid",
   "invalid-scan-request": "Scan request is invalid",
   "rate-limit-exceeded": "Scan start rate limit exceeded",
+  "report-expired": "Scan report has expired",
   "run-not-found": "Scan run was not found",
   "sse-connection-limit": "Too many live scan connections",
 });
@@ -38,6 +40,8 @@ const RUN_ID_PATTERN = /^run-[0-9]+$/;
 const SSE_KEEPALIVE_MS = DEFAULT_SSE_KEEPALIVE_MS;
 const TERMINAL_SSE_EVENTS = new Set(["scan:complete", "scan:error", "scan:expired"]);
 const PUBLIC_DIRECTORY = fileURLToPath(new URL("../../public/", import.meta.url));
+const BENCHMARK_PAGE = fileURLToPath(new URL("../../public/benchmarks.html", import.meta.url));
+const BENCHMARK_RESULTS = fileURLToPath(new URL("../../bench/results.json", import.meta.url));
 const DASHBOARD_CSP = [
   "default-src 'self'",
   "script-src 'self'",
@@ -167,6 +171,27 @@ function canWriteSse(response) {
   return !response.destroyed && !response.writableEnded;
 }
 
+function setPublicHeaders(response) {
+  response.set({
+    "Cache-Control": "no-store",
+    "Content-Security-Policy": DASHBOARD_CSP,
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+  });
+}
+
+function benchmarkUnavailable(response) {
+  response.status(404).set({
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+  }).json({
+    error: {
+      code: "benchmark-data-unavailable",
+      message: "Benchmark data is not available",
+    },
+  });
+}
+
 export function writeSseEvent(response, event, payload) {
   if (!canWriteSse(response)) {
     return false;
@@ -259,6 +284,24 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
         throw new ApiError("run-not-found", 404);
       }
       response.json(snapshot);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/scans/:runId/report", (request, response, next) => {
+    try {
+      const runId = validateRunId(request.params.runId);
+      const report = app.locals.runManager.getReport(runId);
+      if (!report) {
+        const snapshot = app.locals.runManager.getSnapshot(runId);
+        if (snapshot?.status === "expired") {
+          throw new ApiError("report-expired", 410);
+        }
+        throw new ApiError("run-not-found", 404);
+      }
+      response.attachment(`timing-scan-${runId}.json`);
+      response.type("application/json").json(report);
     } catch (error) {
       next(error);
     }
@@ -362,6 +405,32 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
   });
   app.use("/api", handleApiError);
 
+  app.get("/bench/results.json", async (_request, response) => {
+    try {
+      const contents = await readFile(BENCHMARK_RESULTS, "utf8");
+      const results = JSON.parse(contents);
+      const { validateBenchmarkResults } = await import("../../bench/run.js");
+      validateBenchmarkResults(results);
+      response.set({
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+      });
+      response.send(JSON.stringify(results));
+    } catch {
+      benchmarkUnavailable(response);
+    }
+  });
+
+  app.get("/benchmarks", (_request, response, next) => {
+    setPublicHeaders(response);
+    response.sendFile(BENCHMARK_PAGE, (error) => {
+      if (error) {
+        next(error);
+      }
+    });
+  });
+
   // Keep static serving after the explicit API and health routes so it cannot
   // intercept them. Express's static middleware has no directory listing;
   // ignored dotfiles and safe fallthrough preserve the existing 404 behavior.
@@ -370,14 +439,7 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
     fallthrough: true,
     index: "index.html",
     redirect: false,
-    setHeaders: (response) => {
-      response.set({
-        "Cache-Control": "no-store",
-        "Content-Security-Policy": DASHBOARD_CSP,
-        "Referrer-Policy": "no-referrer",
-        "X-Content-Type-Options": "nosniff",
-      });
-    },
+    setHeaders: setPublicHeaders,
   }));
 
   return app;

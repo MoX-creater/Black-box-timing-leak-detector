@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Benchmark Results — Black-box Timing Leak Detector</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <p class="eyebrow">Reproducible evidence</p>
+      <h1>Benchmark results</h1>
+      <p class="lede">
+        This page displays only measured results produced by the repository benchmark runner.
+        <a href="/">Return to the dashboard</a>.
+      </p>
+    </header>
+
+    <main class="dashboard" aria-busy="true">
+      <section id="benchmark-unavailable" class="panel" aria-labelledby="benchmark-status-heading">
+        <h2 id="benchmark-status-heading">Benchmark data</h2>
+        <p id="benchmark-status" class="status" role="status" aria-live="polite">
+          Loading benchmark data…
+        </p>
+        <p id="benchmark-reason" class="note"></p>
+      </section>
+
+      <section id="benchmark-results" class="panel" aria-labelledby="benchmark-results-heading" hidden>
+        <h2 id="benchmark-results-heading">Complete benchmark run</h2>
+        <p id="benchmark-results-note" class="note"></p>
+
+        <h3>Provenance and configuration</h3>
+        <div id="benchmark-provenance"></div>
+
+        <h3>Measured cell results</h3>
+        <div id="benchmark-aggregates"></div>
+
+        <h3>Baseline comparison</h3>
+        <div id="benchmark-baseline"></div>
+      </section>
+    </main>
+
+    <script type="module" src="/benchmarks.js"></script>
+  </body>
+</html>

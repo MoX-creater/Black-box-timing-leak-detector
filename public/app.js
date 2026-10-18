@@ -241,6 +241,14 @@ function metadataEntries(value, fields) {
     .map((entry) => ({ id: entry[fields.id], label: entry[fields.label] }));
 }
 
+function safeReportUrl(value, runId) {
+  if (typeof value !== "string" || typeof runId !== "string") {
+    return null;
+  }
+  const expected = `/api/scans/${encodeURIComponent(runId)}/report`;
+  return value === expected ? value : null;
+}
+
 class ApiRequestError extends Error {
   constructor(status, code, message) {
     super(message || "The request failed");
@@ -299,6 +307,7 @@ export function createDashboard({
     "load-status",
     "noise-select",
     "progress-message",
+    "report-download",
     "run-button",
     "scan-form",
     "scan-status",
@@ -648,6 +657,13 @@ export function createDashboard({
     elements["verdict-badge"].textContent = formatVerdict(state.verdict, state.sensitivityMs);
     elements["evidence-summary"].textContent = state.evidenceMessage;
     elements["side-channel-note"].textContent = SIDE_CHANNEL_NOTE;
+    const reportAvailable = state.phase === "done" && state.reportUrl !== null;
+    elements["report-download"].hidden = !reportAvailable;
+    if (reportAvailable) {
+      elements["report-download"].setAttribute("href", state.reportUrl);
+    } else {
+      elements["report-download"].removeAttribute("href");
+    }
 
     for (const prefix of ["attempts", "accepted", "discarded", "errors"]) {
       elements[`${prefix}-a`].textContent = String(state.progress[prefix].a);
@@ -722,7 +738,7 @@ export function createDashboard({
       ? snapshot.inference.stopReason
       : null;
     if (snapshot.status === "complete") {
-      state.reportUrl = typeof snapshot.reportUrl === "string" ? snapshot.reportUrl : null;
+      state.reportUrl = safeReportUrl(snapshot.reportUrl, state.runId);
       state.phase = "done";
       state.message = "The scan finished.";
       state.evidenceMessage = state.stopReason
@@ -767,7 +783,7 @@ export function createDashboard({
       state.sensitivityMs = safeNumber(payload.sensitivityMs);
       state.stopReason = typeof payload.stopReason === "string" ? payload.stopReason : null;
       state.evidence = normalizeEvidence(payload.evidence);
-      state.reportUrl = typeof payload.reportUrl === "string" ? payload.reportUrl : null;
+      state.reportUrl = safeReportUrl(payload.reportUrl, state.runId);
       state.message = "The scan finished.";
       state.evidenceMessage = state.stopReason
         ? `Stop reason: ${state.stopReason}.`
