@@ -3,6 +3,11 @@ const MAX_POLL_FAILURES = 5;
 const START_COOLDOWN_MS = 1_000;
 const NO_LEAK_VERDICT = "NO_LEAK_DETECTED";
 const SIDE_CHANNEL_NOTE = "A NO LEAK DETECTED result does not prove universal absence of timing side channels.";
+const SVG_NS = "http://www.w3.org/2000/svg";
+const WARNING_LABELS = Object.freeze({
+  BODY_LENGTH_DIFFERENCE: "A/B request body lengths differed.",
+  DISCARD_RATE_DIFFERENCE: "A/B discard rates differed materially.",
+});
 
 const EVENT_NAMES = Object.freeze([
   "scan:started",
@@ -21,12 +26,22 @@ function emptyCounts() {
   };
 }
 
+function emptyEvidence() {
+  return {
+    sensitivityMs: null,
+    statistics: null,
+    stopReason: null,
+    warnings: [],
+  };
+}
+
 function emptyState() {
   return {
     cooldownActive: false,
     cooldownTimer: null,
     errorMessage: "",
     eventSource: null,
+    evidence: emptyEvidence(),
     evidenceMessage: "The detector will report the evidence state from the current run.",
     generation: 0,
     histograms: { a: [], b: [] },
@@ -85,11 +100,81 @@ function normalizeHistograms(histograms) {
       endMs: safeNumber(bin?.endMs),
       startMs: safeNumber(bin?.startMs),
     }))
-    .filter((bin) => bin.startMs !== null && bin.endMs !== null);
+    .filter((bin) => bin.startMs !== null
+      && bin.endMs !== null
+      && bin.startMs <= bin.endMs)
+    .slice(0, 64);
   return {
     a: normalize(histograms?.a),
     b: normalize(histograms?.b),
   };
+}
+
+function normalizeStatistics(statistics) {
+  if (!statistics || typeof statistics !== "object") {
+    return null;
+  }
+  const mannWhitney = statistics.mannWhitney;
+  const lowPercentile = statistics.lowPercentile;
+  if (!mannWhitney || !lowPercentile) {
+    return null;
+  }
+  const normalized = {
+    lowPercentile: {
+      a: safeNumber(lowPercentile.a),
+      absoluteDelta: safeNumber(lowPercentile.absoluteDelta),
+      b: safeNumber(lowPercentile.b),
+      method: lowPercentile.method === "linear-type-7" ? lowPercentile.method : null,
+      probability: safeNumber(lowPercentile.probability),
+      signedDelta: safeNumber(lowPercentile.signedDelta),
+    },
+    mannWhitney: {
+      degenerate: typeof mannWhitney.degenerate === "boolean" ? mannWhitney.degenerate : null,
+      pValue: safeNumber(mannWhitney.pValue),
+      uA: safeNumber(mannWhitney.uA),
+      uB: safeNumber(mannWhitney.uB),
+      z: safeNumber(mannWhitney.z),
+    },
+  };
+  if (Object.values(normalized.lowPercentile).some((value) => value === null)
+    || Object.values(normalized.mannWhitney).some((value) => value === null)) {
+    return null;
+  }
+  return normalized;
+}
+
+function normalizeWarnings(warnings) {
+  if (!Array.isArray(warnings)) {
+    return [];
+  }
+  return warnings.flatMap((warning) => {
+    if (warning?.code === "BODY_LENGTH_DIFFERENCE" && Number.isFinite(warning.differenceBytes)) {
+      return [{ code: warning.code, differenceBytes: warning.differenceBytes }];
+    }
+    if (warning?.code === "DISCARD_RATE_DIFFERENCE"
+      && Number.isFinite(warning.rateA)
+      && Number.isFinite(warning.rateB)) {
+      return [{ code: warning.code, rateA: warning.rateA, rateB: warning.rateB }];
+    }
+    return [];
+  });
+}
+
+function normalizeEvidence(evidence) {
+  return {
+    sensitivityMs: safeNumber(evidence?.sensitivityMs),
+    statistics: normalizeStatistics(evidence?.statistics),
+    stopReason: typeof evidence?.stopReason === "string" ? evidence.stopReason : null,
+    warnings: normalizeWarnings(evidence?.warnings),
+  };
+}
+
+function fixedNumber(value, digits = 2) {
+  return Number.isFinite(value) ? value.toFixed(digits) : "unavailable";
+}
+
+function fixedMilliseconds(value, digits = 2) {
+  return Number.isFinite(value) ? `${fixedNumber(value, digits)} ms` : "unavailable";
 }
 
 function formatSensitivity(value) {
@@ -196,6 +281,21 @@ export function createDashboard({
     "dashboard",
     "error-message",
     "evidence-summary",
+    "evidence-delta",
+    "evidence-discarded-a",
+    "evidence-discarded-b",
+    "evidence-errors-a",
+    "evidence-errors-b",
+    "evidence-p-value",
+    "evidence-percentile-a",
+    "evidence-percentile-b",
+    "evidence-sensitivity",
+    "evidence-stop-reason",
+    "evidence-u-a",
+    "evidence-u-b",
+    "histogram-legend",
+    "histogram-output",
+    "histogram-status",
     "load-status",
     "noise-select",
     "progress-message",
@@ -205,6 +305,7 @@ export function createDashboard({
     "side-channel-note",
     "target-select",
     "verdict-badge",
+    "warning-list",
   ];
   for (const prefix of ["attempts", "accepted", "discarded", "errors"]) {
     ids.push(`${prefix}-a`, `${prefix}-b`);
@@ -225,6 +326,303 @@ export function createDashboard({
     });
     select.replaceChildren(...options);
     select.value = selectedId;
+  }
+
+  function svgElement(name, attributes = {}) {
+    const element = documentRef.createElementNS(SVG_NS, name);
+    for (const [attribute, value] of Object.entries(attributes)) {
+      element.setAttribute(attribute, String(value));
+    }
+    return element;
+  }
+
+  function svgText(text, attributes = {}) {
+    const element = svgElement("text", attributes);
+    element.textContent = text;
+    return element;
+  }
+
+  function chartBins(group) {
+    return state.progress.accepted[group] > 0 ? state.histograms[group] : [];
+  }
+
+  function renderLegend() {
+    const aKey = documentRef.createElement("span");
+    aKey.className = "legend-key";
+    const aSwatch = documentRef.createElement("span");
+    aSwatch.className = "legend-swatch legend-a";
+    aSwatch.setAttribute("aria-hidden", "true");
+    const aLabel = documentRef.createElement("span");
+    aLabel.textContent = "A accepted";
+    aKey.append(aSwatch, aLabel);
+
+    const bKey = documentRef.createElement("span");
+    bKey.className = "legend-key";
+    const bSwatch = documentRef.createElement("span");
+    bSwatch.className = "legend-swatch legend-b";
+    bSwatch.setAttribute("aria-hidden", "true");
+    const bLabel = documentRef.createElement("span");
+    bLabel.textContent = "B accepted";
+    bKey.append(bSwatch, bLabel);
+    elements["histogram-legend"].replaceChildren(aKey, bKey);
+  }
+
+  function renderHistogramTable(groups) {
+    const scroll = documentRef.createElement("div");
+    scroll.className = "histogram-table-scroll";
+    const table = documentRef.createElement("table");
+    table.className = "histogram-table";
+    const caption = documentRef.createElement("caption");
+    caption.textContent = "Accepted timing bins, in milliseconds";
+    table.append(caption);
+    const head = documentRef.createElement("thead");
+    const headerRow = documentRef.createElement("tr");
+    for (const label of ["Group", "Start (ms)", "End (ms)", "Accepted count"]) {
+      const cell = documentRef.createElement("th");
+      cell.scope = "col";
+      cell.textContent = label;
+      headerRow.append(cell);
+    }
+    head.append(headerRow);
+    table.append(head);
+    const body = documentRef.createElement("tbody");
+    let rowCount = 0;
+    for (const group of groups) {
+      for (const bin of group.bins) {
+        const row = documentRef.createElement("tr");
+        for (const value of [
+          group.label,
+          fixedNumber(bin.startMs),
+          fixedNumber(bin.endMs),
+          String(bin.count),
+        ]) {
+          const cell = documentRef.createElement("td");
+          cell.textContent = value;
+          row.append(cell);
+        }
+        body.append(row);
+        rowCount += 1;
+      }
+    }
+    if (rowCount === 0) {
+      const row = documentRef.createElement("tr");
+      const cell = documentRef.createElement("td");
+      cell.colSpan = 4;
+      cell.textContent = "No accepted samples are available.";
+      row.append(cell);
+      body.append(row);
+    }
+    table.append(body);
+    scroll.append(table);
+    return scroll;
+  }
+
+  function renderHistogram() {
+    const binsA = chartBins("a");
+    const binsB = chartBins("b");
+    const groups = [
+      { bins: binsA, label: "A" },
+      { bins: binsB, label: "B" },
+    ];
+    const allBins = [...binsA, ...binsB];
+    const totalAccepted = state.progress.accepted.a + state.progress.accepted.b;
+    const minMs = allBins.length > 0 ? Math.min(...allBins.map((bin) => bin.startMs)) : 0;
+    const maxMs = allBins.length > 0 ? Math.max(...allBins.map((bin) => bin.endMs)) : 1;
+    const zeroRange = minMs === maxMs;
+    const domainMax = zeroRange ? minMs + 1 : maxMs;
+    const domainRange = domainMax - minMs;
+    const width = 720;
+    const height = 360;
+    const margin = { bottom: 56, left: 64, right: 20, top: 20 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+    const maxCount = Math.max(1, ...allBins.map((bin) => bin.count));
+    const svg = svgElement("svg", {
+      "aria-labelledby": "histogram-title histogram-description",
+      class: "histogram-svg",
+      role: "img",
+      viewBox: `0 0 ${width} ${height}`,
+    });
+    const title = svgElement("title", { id: "histogram-title" });
+    title.textContent = "Accepted A and B response timing histogram";
+    const description = svgElement("desc", { id: "histogram-description" });
+    description.textContent = "Overlaid accepted response duration bins for groups A and B. Discarded requests are excluded.";
+    const defs = svgElement("defs");
+    const pattern = svgElement("pattern", {
+      height: 8,
+      id: "histogram-pattern-b",
+      patternTransform: "rotate(0)",
+      patternUnits: "userSpaceOnUse",
+      width: 8,
+    });
+    pattern.append(svgElement("rect", { class: "pattern-background", height: 8, width: 8 }));
+    pattern.append(svgElement("path", {
+      class: "pattern-line",
+      d: "M-2,2 L2,-2 M0,8 L8,0 M6,10 L10,6",
+    }));
+    defs.append(pattern);
+    svg.append(title, description, defs);
+
+    const plot = svgElement("g", { class: "histogram-plot" });
+    const yScale = (value) => margin.top + plotHeight - ((value / maxCount) * plotHeight);
+    const xScale = (value) => margin.left + (((value - minMs) / domainRange) * plotWidth);
+    const yTicks = [0, maxCount / 2, maxCount];
+    for (const tick of yTicks) {
+      const y = yScale(tick);
+      plot.append(svgElement("line", {
+        class: "histogram-grid",
+        x1: margin.left,
+        x2: margin.left + plotWidth,
+        y1: y,
+        y2: y,
+      }));
+      plot.append(svgText(String(Number.isInteger(tick) ? tick : tick.toFixed(1)), {
+        class: "histogram-tick-label",
+        textAnchor: "end",
+        x: margin.left - 8,
+        y: y + 4,
+      }));
+    }
+    plot.append(svgElement("line", {
+      class: "histogram-axis",
+      x1: margin.left,
+      x2: margin.left,
+      y1: margin.top,
+      y2: margin.top + plotHeight,
+    }));
+    plot.append(svgElement("line", {
+      class: "histogram-axis",
+      x1: margin.left,
+      x2: margin.left + plotWidth,
+      y1: margin.top + plotHeight,
+      y2: margin.top + plotHeight,
+    }));
+    const xTicks = [...new Set([minMs, minMs + (domainRange / 2), domainMax])];
+    for (const tick of xTicks) {
+      const x = xScale(tick);
+      plot.append(svgElement("line", {
+        class: "histogram-tick",
+        x1: x,
+        x2: x,
+        y1: margin.top + plotHeight,
+        y2: margin.top + plotHeight + 6,
+      }));
+      plot.append(svgText(fixedNumber(tick), {
+        class: "histogram-tick-label",
+        textAnchor: "middle",
+        x,
+        y: margin.top + plotHeight + 22,
+      }));
+    }
+    plot.append(svgText("Accepted samples (count)", {
+      class: "histogram-axis-label",
+      textAnchor: "middle",
+      transform: `rotate(-90 16 ${margin.top + (plotHeight / 2)})`,
+      x: 16,
+      y: margin.top + (plotHeight / 2),
+    }));
+    plot.append(svgText("Response duration (ms)", {
+      class: "histogram-axis-label",
+      textAnchor: "middle",
+      x: margin.left + (plotWidth / 2),
+      y: height - 12,
+    }));
+
+    for (const [index, group] of groups.entries()) {
+      const series = svgElement("g", {
+        "aria-label": `${group.label} accepted samples`,
+        class: `histogram-series-${group.label.toLowerCase()}`,
+      });
+      for (const bin of group.bins) {
+        if (bin.count <= 0) {
+          continue;
+        }
+        const rawX = xScale(bin.startMs);
+        const rawWidth = xScale(bin.endMs) - rawX;
+        const barWidth = zeroRange ? 10 : Math.max(3, rawWidth - 2);
+        const x = zeroRange
+          ? margin.left + (plotWidth / 2) - (barWidth / 2)
+          : rawX + 1;
+        const y = yScale(bin.count);
+        series.append(svgElement("rect", {
+          class: `histogram-bar histogram-bar-${group.label.toLowerCase()}`,
+          height: Math.max(1, margin.top + plotHeight - y),
+          width: barWidth,
+          x,
+          y,
+        }));
+      }
+      plot.append(series);
+      if (index === 0) {
+        plot.append(svgText("A", {
+          class: "histogram-label",
+          x: margin.left + 6,
+          y: margin.top + 16,
+        }));
+      }
+    }
+    if (binsB.length > 0) {
+      plot.append(svgText("B", {
+        class: "histogram-label",
+        x: margin.left + 28,
+        y: margin.top + 16,
+      }));
+    }
+    svg.append(plot);
+
+    const message = documentRef.createElement("p");
+    message.className = "histogram-empty";
+    if (totalAccepted === 0) {
+      message.textContent = "INCONCLUSIVE — no accepted samples to plot.";
+      elements["histogram-status"].textContent = "No accepted samples are available for the histogram.";
+    } else if (allBins.length === 0) {
+      message.textContent = "Accepted samples exist, but histogram bins are unavailable.";
+      elements["histogram-status"].textContent = "Histogram bins are unavailable.";
+    } else {
+      message.textContent = "Discarded requests are not plotted.";
+      elements["histogram-status"].textContent = "Showing accepted response timing bins.";
+    }
+    const table = renderHistogramTable(groups);
+    elements["histogram-output"].replaceChildren(svg, message, table);
+  }
+
+  function renderEvidence() {
+    const statistics = state.evidence.statistics;
+    const lowPercentile = statistics?.lowPercentile;
+    const mannWhitney = statistics?.mannWhitney;
+    elements["evidence-u-a"].textContent = fixedNumber(mannWhitney?.uA);
+    elements["evidence-u-b"].textContent = fixedNumber(mannWhitney?.uB);
+    elements["evidence-p-value"].textContent = fixedNumber(mannWhitney?.pValue, 4);
+    elements["evidence-percentile-a"].textContent = fixedMilliseconds(lowPercentile?.a);
+    elements["evidence-percentile-b"].textContent = fixedMilliseconds(lowPercentile?.b);
+    elements["evidence-delta"].textContent = lowPercentile
+      ? `${fixedNumber(lowPercentile.signedDelta)} ms (absolute ${fixedNumber(lowPercentile.absoluteDelta)} ms)`
+      : "unavailable";
+    elements["evidence-sensitivity"].textContent = state.evidence.sensitivityMs === null
+      ? "unavailable"
+      : `${fixedNumber(state.evidence.sensitivityMs)} ms`;
+    elements["evidence-stop-reason"].textContent = state.evidence.stopReason ?? "unavailable";
+    elements["evidence-discarded-a"].textContent = String(state.progress.discarded.a);
+    elements["evidence-discarded-b"].textContent = String(state.progress.discarded.b);
+    elements["evidence-errors-a"].textContent = String(state.progress.errors.a);
+    elements["evidence-errors-b"].textContent = String(state.progress.errors.b);
+    const warningItems = state.evidence.warnings.map((warning) => {
+      const item = documentRef.createElement("li");
+      item.textContent = WARNING_LABELS[warning.code] ?? "Warning unavailable.";
+      if (warning.code === "BODY_LENGTH_DIFFERENCE") {
+        item.textContent += ` Difference: ${fixedNumber(warning.differenceBytes, 0)} bytes.`;
+      }
+      if (warning.code === "DISCARD_RATE_DIFFERENCE") {
+        item.textContent += ` A: ${fixedNumber(warning.rateA * 100, 1)}%; B: ${fixedNumber(warning.rateB * 100, 1)}%.`;
+      }
+      return item;
+    });
+    if (warningItems.length === 0) {
+      const item = documentRef.createElement("li");
+      item.textContent = state.evidence.statistics === null ? "unavailable" : "No warnings recorded.";
+      warningItems.push(item);
+    }
+    elements["warning-list"].replaceChildren(...warningItems);
   }
 
   function render() {
@@ -255,6 +653,9 @@ export function createDashboard({
       elements[`${prefix}-a`].textContent = String(state.progress[prefix].a);
       elements[`${prefix}-b`].textContent = String(state.progress[prefix].b);
     }
+    renderLegend();
+    renderHistogram();
+    renderEvidence();
   }
 
   function clearPollingTimer() {
@@ -314,6 +715,7 @@ export function createDashboard({
     }
     applyProgress(snapshot.progress ?? {});
     state.histograms = normalizeHistograms(snapshot.histograms);
+    state.evidence = normalizeEvidence(snapshot.evidence);
     state.verdict = typeof snapshot.verdict === "string" ? snapshot.verdict : null;
     state.sensitivityMs = safeNumber(snapshot.inference?.sensitivityMs);
     state.stopReason = typeof snapshot.inference?.stopReason === "string"
@@ -364,6 +766,7 @@ export function createDashboard({
       state.verdict = typeof payload.verdict === "string" ? payload.verdict : null;
       state.sensitivityMs = safeNumber(payload.sensitivityMs);
       state.stopReason = typeof payload.stopReason === "string" ? payload.stopReason : null;
+      state.evidence = normalizeEvidence(payload.evidence);
       state.reportUrl = typeof payload.reportUrl === "string" ? payload.reportUrl : null;
       state.message = "The scan finished.";
       state.evidenceMessage = state.stopReason
@@ -520,6 +923,7 @@ export function createDashboard({
       }
       state.runId = run.runId;
       state.phase = "running";
+      state.evidence = emptyEvidence();
       state.progress = emptyCounts();
       state.histograms = { a: [], b: [] };
       state.lookIndex = 0;
@@ -550,6 +954,7 @@ export function createDashboard({
     state.runId = null;
     state.phase = "starting";
     state.errorMessage = "";
+    state.evidence = emptyEvidence();
     state.verdict = null;
     state.sensitivityMs = null;
     state.stopReason = null;

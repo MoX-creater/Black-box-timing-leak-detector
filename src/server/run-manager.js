@@ -60,6 +60,24 @@ const REQUEST_TEMPLATE_IDS = Object.freeze({
   b: "demo-missing-user",
 });
 
+const PUBLIC_VERDICTS = new Set(["LEAK", "NO_LEAK_DETECTED", "INCONCLUSIVE"]);
+const PUBLIC_STOP_REASONS = new Set([
+  "aborted",
+  "baseline-status-mismatch",
+  "data-quality-failure",
+  "fatal-transport-error",
+  "leak-detected",
+  "max-attempts-inconclusive",
+  "max-samples-inconclusive",
+  "max-samples-no-leak",
+  "sensitivity-unavailable",
+  "warmup-failed",
+]);
+const PUBLIC_WARNING_CODES = new Set([
+  "BODY_LENGTH_DIFFERENCE",
+  "DISCARD_RATE_DIFFERENCE",
+]);
+
 async function defaultDetectorRunner(options) {
   const { runDetector } = await import("../detector/index.js");
   return runDetector(options);
@@ -423,9 +441,110 @@ function reportInference(record) {
   const inference = record.report?.inference;
   const observation = record.report?.observation;
   return {
-    sensitivityMs: Number.isFinite(inference?.sensitivityMs) ? inference.sensitivityMs : null,
-    stopReason: typeof observation?.stopReason === "string" ? observation.stopReason : null,
-    verdict: typeof inference?.verdict === "string" ? inference.verdict : null,
+    sensitivityMs: nonNegativeFinite(inference?.sensitivityMs),
+    stopReason: typeof observation?.stopReason === "string"
+      && PUBLIC_STOP_REASONS.has(observation.stopReason)
+      ? observation.stopReason
+      : null,
+    verdict: PUBLIC_VERDICTS.has(inference?.verdict) ? inference.verdict : null,
+  };
+}
+
+function nonNegativeFinite(value) {
+  return Number.isFinite(value) && value >= 0 ? value : null;
+}
+
+function publicWarnings(warnings) {
+  if (!Array.isArray(warnings)) {
+    return [];
+  }
+  return warnings.flatMap((warning) => {
+    if (!warning || !PUBLIC_WARNING_CODES.has(warning.code)) {
+      return [];
+    }
+    if (warning.code === "BODY_LENGTH_DIFFERENCE") {
+      const differenceBytes = nonNegativeFinite(warning.differenceBytes);
+      return differenceBytes === null ? [] : [{ code: warning.code, differenceBytes }];
+    }
+    const rateA = Number.isFinite(warning.rateA) && warning.rateA >= 0 && warning.rateA <= 1
+      ? warning.rateA
+      : null;
+    const rateB = Number.isFinite(warning.rateB) && warning.rateB >= 0 && warning.rateB <= 1
+      ? warning.rateB
+      : null;
+    return rateA === null || rateB === null
+      ? []
+      : [{ code: warning.code, rateA, rateB }];
+  });
+}
+
+function publicStatistics(statistics) {
+  if (!statistics || typeof statistics !== "object") {
+    return null;
+  }
+  const mannWhitney = statistics.mannWhitney;
+  const lowPercentile = statistics.lowPercentile;
+  if (!mannWhitney || !lowPercentile || typeof mannWhitney !== "object"
+    || typeof lowPercentile !== "object") {
+    return null;
+  }
+  const values = {
+    uA: nonNegativeFinite(mannWhitney.uA),
+    uB: nonNegativeFinite(mannWhitney.uB),
+    pValue: Number.isFinite(mannWhitney.pValue) && mannWhitney.pValue >= 0 && mannWhitney.pValue <= 1
+      ? mannWhitney.pValue
+      : null,
+    z: Number.isFinite(mannWhitney.z) ? mannWhitney.z : null,
+    degenerate: typeof mannWhitney.degenerate === "boolean" ? mannWhitney.degenerate : null,
+    a: nonNegativeFinite(lowPercentile.a),
+    b: nonNegativeFinite(lowPercentile.b),
+    signedDelta: Number.isFinite(lowPercentile.signedDelta) ? lowPercentile.signedDelta : null,
+    absoluteDelta: nonNegativeFinite(lowPercentile.absoluteDelta),
+    probability: Number.isFinite(lowPercentile.probability)
+      && lowPercentile.probability >= 0
+      && lowPercentile.probability <= 1
+      ? lowPercentile.probability
+      : null,
+    method: lowPercentile.method === "linear-type-7" ? lowPercentile.method : null,
+  };
+  if (Object.values(values).some((value) => value === null)) {
+    return null;
+  }
+  return {
+    lowPercentile: {
+      a: values.a,
+      absoluteDelta: values.absoluteDelta,
+      b: values.b,
+      method: values.method,
+      probability: values.probability,
+      signedDelta: values.signedDelta,
+    },
+    mannWhitney: {
+      degenerate: values.degenerate,
+      pValue: values.pValue,
+      uA: values.uA,
+      uB: values.uB,
+      z: values.z,
+    },
+  };
+}
+
+// Completed public evidence is an explicit projection. Never spread the
+// report: seeds, request metadata, raw samples, client keys, hosts, ports, and
+// internal report fields must remain private to the manager.
+function publicEvidence(record) {
+  const inference = record.report?.inference;
+  const observation = record.report?.observation;
+  const stopReason = typeof observation?.stopReason === "string"
+    && PUBLIC_STOP_REASONS.has(observation.stopReason)
+    ? observation.stopReason
+    : null;
+  const sensitivityMs = nonNegativeFinite(inference?.sensitivityMs);
+  return {
+    sensitivityMs,
+    statistics: publicStatistics(inference?.statistics),
+    stopReason,
+    warnings: publicWarnings(inference?.warnings),
   };
 }
 
@@ -442,6 +561,7 @@ function publicSnapshot(record) {
     verdict: inference?.verdict ?? null,
   };
   if (record.status === "complete") {
+    snapshot.evidence = publicEvidence(record);
     snapshot.inference = inference;
     snapshot.reportUrl = `/api/scans/${encodeURIComponent(record.runId)}/report`;
   } else if (record.status === "failed") {
@@ -479,6 +599,7 @@ function terminalEvent(record) {
     return {
       event: "scan:complete",
       payload: {
+        evidence: publicEvidence(record),
         reportUrl: `/api/scans/${encodeURIComponent(record.runId)}/report`,
         runId: record.runId,
         sensitivityMs: inference.sensitivityMs,

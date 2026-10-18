@@ -81,6 +81,73 @@
           A NO LEAK DETECTED result does not prove universal absence of timing side channels.
         </p>
       </section>
+
+      <section class="panel histogram-panel" aria-labelledby="histogram-heading">
+        <h2 id="histogram-heading">Accepted timing distribution</h2>
+        <p id="histogram-status" class="status" role="status" aria-live="polite">
+          Accepted timing bins will appear while the scan runs.
+        </p>
+        <div id="histogram-legend" class="chart-legend" aria-label="Histogram legend"></div>
+        <div id="histogram-output" class="histogram-output"></div>
+      </section>
+
+      <section class="panel evidence-panel" aria-labelledby="evidence-heading">
+        <h2 id="evidence-heading">Evidence details</h2>
+        <dl class="evidence-list">
+          <div>
+            <dt>U(A)</dt>
+            <dd id="evidence-u-a">unavailable</dd>
+          </div>
+          <div>
+            <dt>U(B)</dt>
+            <dd id="evidence-u-b">unavailable</dd>
+          </div>
+          <div>
+            <dt>Mann-Whitney p-value</dt>
+            <dd id="evidence-p-value">unavailable</dd>
+          </div>
+          <div>
+            <dt>Low percentile A</dt>
+            <dd id="evidence-percentile-a">unavailable</dd>
+          </div>
+          <div>
+            <dt>Low percentile B</dt>
+            <dd id="evidence-percentile-b">unavailable</dd>
+          </div>
+          <div>
+            <dt>Low-percentile delta</dt>
+            <dd id="evidence-delta">unavailable</dd>
+          </div>
+          <div>
+            <dt>Sensitivity</dt>
+            <dd id="evidence-sensitivity">unavailable</dd>
+          </div>
+          <div>
+            <dt>Stop reason</dt>
+            <dd id="evidence-stop-reason">unavailable</dd>
+          </div>
+          <div>
+            <dt>A discarded</dt>
+            <dd id="evidence-discarded-a">0</dd>
+          </div>
+          <div>
+            <dt>B discarded</dt>
+            <dd id="evidence-discarded-b">0</dd>
+          </div>
+          <div>
+            <dt>A errors</dt>
+            <dd id="evidence-errors-a">0</dd>
+          </div>
+          <div>
+            <dt>B errors</dt>
+            <dd id="evidence-errors-b">0</dd>
+          </div>
+        </dl>
+        <h3>Warnings</h3>
+        <ul id="warning-list" class="warning-list">
+          <li>unavailable</li>
+        </ul>
+      </section>
     </main>
 
     <script type="module" src="/app.js"></script>

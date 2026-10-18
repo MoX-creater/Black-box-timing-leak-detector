@@ -208,7 +208,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** L
 - **Linked PRD:** FR-07, FR-10
 
-### T3.5 — [Must-have] Render bounded overlaid A/B timing histograms and evidence details.
+### [x] T3.5 — [Must-have] Render bounded overlaid A/B timing histograms and evidence details.
 
 - **Description:** Draw accepted A/B timing bins and display U/p-value, low-percentile effect, sensitivity, stop reason, warnings, and discard counts.
 - **Acceptance:** A completed local scan visibly renders separate overlaid A/B histograms and the exact verdict fields from its report; discarded samples are not plotted; a fixture with no accepted samples shows `INCONCLUSIVE`.

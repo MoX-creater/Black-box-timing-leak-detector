@@ -64,9 +64,14 @@ class FakeElement {
     this.id = id;
     this.listeners = new Map();
     this.attributes = new Map();
+    this.namespaceURI = null;
     this.tagName = tagName;
     this.textContent = "";
     this.value = "";
+  }
+
+  set innerHTML(_value) {
+    throw new Error("innerHTML is forbidden in dashboard rendering");
   }
 
   addEventListener(name, listener) {
@@ -99,8 +104,23 @@ class FakeDocument {
     this.elements = new Map();
     for (const id of [
       "dashboard",
+      "evidence-delta",
+      "evidence-discarded-a",
+      "evidence-discarded-b",
+      "evidence-errors-a",
+      "evidence-errors-b",
       "error-message",
       "evidence-summary",
+      "evidence-p-value",
+      "evidence-percentile-a",
+      "evidence-percentile-b",
+      "evidence-sensitivity",
+      "evidence-stop-reason",
+      "evidence-u-a",
+      "evidence-u-b",
+      "histogram-legend",
+      "histogram-output",
+      "histogram-status",
       "load-status",
       "noise-select",
       "progress-message",
@@ -110,6 +130,7 @@ class FakeDocument {
       "side-channel-note",
       "target-select",
       "verdict-badge",
+      "warning-list",
     ]) {
       const tagName = id.endsWith("select") ? "select" : id === "scan-form" ? "form" : "div";
       this.elements.set(id, new FakeElement(tagName, id));
@@ -124,6 +145,12 @@ class FakeDocument {
 
   createElement(tagName) {
     return new FakeElement(tagName);
+  }
+
+  createElementNS(namespaceURI, tagName) {
+    const element = new FakeElement(tagName);
+    element.namespaceURI = namespaceURI;
+    return element;
   }
 
   getElementById(id) {
@@ -265,7 +292,8 @@ test("static dashboard source contract scan names the grep-style safety checks h
   assert.match(source, /EventSourceImpl/);
   assert.match(source, /pollOnce/);
   assert.doesNotMatch(source, /innerHTML|outerHTML|document\.write/);
-  assert.doesNotMatch(source, /https?:\/\//i);
+  const sourceWithoutSvgNamespace = source.replaceAll("http://www.w3.org/2000/svg", "");
+  assert.doesNotMatch(sourceWithoutSvgNamespace, /https?:\/\//i);
   assert.doesNotMatch(html, /<input[^>]+(?:url|header|body)/i);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /role="alert"/);
@@ -449,4 +477,155 @@ test("polling fallback stops visibly after five consecutive failures", async () 
   await timers.advance(5_000);
   assert.equal(pollCalls.length, callsAfterStop);
   dashboard.destroy();
+});
+
+function descendants(node) {
+  return [node, ...node.children.flatMap((child) => descendants(child))];
+}
+
+test("dashboard renders SVG bars from progress and a completed snapshot without innerHTML", async () => {
+  const post = deferred();
+  const completed = deferred();
+  const fetchImpl = (url, options = {}) => {
+    if (url === "/api/targets") {
+      return Promise.resolve(response(METADATA));
+    }
+    if (url === "/api/scans" && options.method === "POST") {
+      return post.promise;
+    }
+    if (url === "/api/scans/run-0003") {
+      return completed.promise;
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+  const { dashboard, documentRef, timers } = createDashboardHarness(fetchImpl);
+  await flushMicrotasks();
+  documentRef.getElementById("scan-form").dispatchEvent({ preventDefault() {}, type: "submit" });
+  post.resolve(response({ runId: "run-0003", status: "running" }, { status: 202 }));
+  await flushMicrotasks();
+  const source = FakeEventSource.instances[0];
+  source.emit("scan:progress", {
+    accepted: { a: 2, b: 1 },
+    attempts: { a: 2, b: 1 },
+    discarded: { a: 0, b: 0 },
+    errors: { a: 0, b: 0 },
+    histograms: {
+      a: [
+        { count: 1, endMs: 2, startMs: 1 },
+        { count: 1, endMs: 3, startMs: 2 },
+      ],
+      b: [{ count: 1, endMs: 3, startMs: 1 }],
+    },
+    lookIndex: 1,
+    runId: "run-0003",
+    status: "running",
+  });
+  const progressNodes = descendants(documentRef.getElementById("histogram-output"));
+  assert.equal(progressNodes.filter((node) => node.attributes.get("class")?.includes("histogram-bar-a")).length, 2);
+  assert.equal(progressNodes.filter((node) => node.attributes.get("class")?.includes("histogram-bar-b")).length, 1);
+  assert.equal(progressNodes.filter((node) => node.tagName === "defs").length, 1);
+  assert.equal(progressNodes.filter((node) => node.attributes.get("id") === "histogram-pattern-b").length, 1);
+
+  source.emit("scan:progress", {
+    accepted: { a: 1, b: 0 },
+    attempts: { a: 1, b: 0 },
+    discarded: { a: 0, b: 0 },
+    errors: { a: 0, b: 0 },
+    histograms: {
+      a: [{ count: 1, endMs: 5, startMs: 5 }],
+      b: [],
+    },
+    lookIndex: 1,
+    runId: "run-0003",
+    status: "running",
+  });
+  const zeroRangeRect = descendants(documentRef.getElementById("histogram-output"))
+    .find((node) => node.attributes.get("class")?.includes("histogram-bar-a"));
+  assert.ok(Number(zeroRangeRect.attributes.get("width")) > 0);
+  assert.ok(descendants(documentRef.getElementById("histogram-output"))
+    .some((node) => node.attributes.get("class") === "histogram-series-b"));
+
+  source.fail();
+  await timers.advance(1_000);
+  completed.resolve(response({
+    evidence: {
+      sensitivityMs: 3.5,
+      statistics: null,
+      stopReason: "max-samples-inconclusive",
+      warnings: [],
+    },
+    histograms: {
+      a: [{ count: 1, endMs: 2, startMs: 1 }],
+      b: [{ count: 1, endMs: 2, startMs: 1 }],
+    },
+    inference: { sensitivityMs: 3.5, stopReason: "max-samples-inconclusive", verdict: "INCONCLUSIVE" },
+    progress: {
+      accepted: { a: 1, b: 1 },
+      attempts: { a: 1, b: 1 },
+      discarded: { a: 0, b: 0 },
+      errors: { a: 0, b: 0 },
+    },
+    reportUrl: "/api/scans/run-0003/report",
+    runId: "run-0003",
+    status: "complete",
+    verdict: "INCONCLUSIVE",
+  }));
+  await flushMicrotasks();
+  assert.equal(dashboard.state.phase, "done");
+  assert.equal(documentRef.getElementById("verdict-badge").textContent, "INCONCLUSIVE");
+  assert.equal(documentRef.getElementById("histogram-output").children[0].tagName, "svg");
+  assert.equal(descendants(documentRef.getElementById("histogram-output")).filter(
+    (node) => node.attributes.get("class")?.includes("histogram-bar-a"),
+  ).length, 1);
+  assert.equal(descendants(documentRef.getElementById("histogram-output")).filter(
+    (node) => node.attributes.get("class")?.includes("histogram-bar-b"),
+  ).length, 1);
+  assert.equal(documentRef.getElementById("evidence-sensitivity").textContent, "3.50 ms");
+
+  dashboard.destroy();
+  const noSamplesPost = deferred();
+  const noSamplesCompleted = deferred();
+  const noSamplesFetch = (url, options = {}) => {
+    if (url === "/api/targets") {
+      return Promise.resolve(response(METADATA));
+    }
+    if (url === "/api/scans" && options.method === "POST") {
+      return noSamplesPost.promise;
+    }
+    if (url === "/api/scans/run-0004") {
+      return noSamplesCompleted.promise;
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+  const noSamples = createDashboardHarness(noSamplesFetch);
+  await flushMicrotasks();
+  noSamples.documentRef.getElementById("scan-form").dispatchEvent({ preventDefault() {}, type: "submit" });
+  noSamplesPost.resolve(response({ runId: "run-0004", status: "running" }, { status: 202 }));
+  await flushMicrotasks();
+  const noSamplesSource = FakeEventSource.instances[0];
+  noSamplesSource.fail();
+  await noSamples.timers.advance(1_000);
+  noSamplesCompleted.resolve(response({
+    evidence: { sensitivityMs: null, statistics: null, stopReason: "data-quality-failure", warnings: [] },
+    histograms: { a: [], b: [] },
+    inference: { sensitivityMs: null, stopReason: "data-quality-failure", verdict: "INCONCLUSIVE" },
+    progress: {
+      accepted: { a: 0, b: 0 },
+      attempts: { a: 2, b: 2 },
+      discarded: { a: 2, b: 2 },
+      errors: { a: 1, b: 1 },
+    },
+    runId: "run-0004",
+    status: "complete",
+    verdict: "INCONCLUSIVE",
+  }));
+  await flushMicrotasks();
+  assert.match(
+    descendants(noSamples.documentRef.getElementById("histogram-output"))
+      .map((node) => node.textContent)
+      .join(" "),
+    /INCONCLUSIVE — no accepted samples to plot/,
+  );
+  assert.equal(noSamples.documentRef.getElementById("evidence-sensitivity").textContent, "unavailable");
+  noSamples.dashboard.destroy();
 });
