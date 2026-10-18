@@ -1,4 +1,5 @@
 import express from "express";
+import { fileURLToPath } from "node:url";
 
 import { createNoiseConfig } from "../demos/noise.js";
 import {
@@ -36,6 +37,16 @@ const SCAN_BODY_LIMIT = "1kb";
 const RUN_ID_PATTERN = /^run-[0-9]+$/;
 const SSE_KEEPALIVE_MS = DEFAULT_SSE_KEEPALIVE_MS;
 const TERMINAL_SSE_EVENTS = new Set(["scan:complete", "scan:error", "scan:expired"]);
+const PUBLIC_DIRECTORY = fileURLToPath(new URL("../../public/", import.meta.url));
+const DASHBOARD_CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self'",
+  "connect-src 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
+].join("; ");
 
 class ApiError extends Error {
   constructor(code, statusCode) {
@@ -350,6 +361,24 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
     response.status(404).json(createErrorBody("invalid-scan-request"));
   });
   app.use("/api", handleApiError);
+
+  // Keep static serving after the explicit API and health routes so it cannot
+  // intercept them. Express's static middleware has no directory listing;
+  // ignored dotfiles and safe fallthrough preserve the existing 404 behavior.
+  app.use(express.static(PUBLIC_DIRECTORY, {
+    dotfiles: "ignore",
+    fallthrough: true,
+    index: "index.html",
+    redirect: false,
+    setHeaders: (response) => {
+      response.set({
+        "Cache-Control": "no-store",
+        "Content-Security-Policy": DASHBOARD_CSP,
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+      });
+    },
+  }));
 
   return app;
 }

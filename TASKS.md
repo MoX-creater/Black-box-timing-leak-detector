@@ -200,7 +200,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-05, FR-07, FR-10
 
-### T3.4 — [Must-have] Build the dashboard's functional scan flow.
+### [x] T3.4 — [Must-have] Build the dashboard's functional scan flow.
 
 - **Description:** Add browser-native target/noise controls, run action, live progress, counts, and verdict state using SSE with polling fallback.
 - **Acceptance:** Start `npm run dev`, open `/`, select only vulnerable/fixed IDs, run a local scan, observe progress/count changes, and verify the browser sends no user-entered URL; static asset smoke tests pass under `npm test`.

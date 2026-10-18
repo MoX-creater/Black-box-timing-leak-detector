@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Black-box Timing Leak Detector</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <p class="eyebrow">Black-box timing analysis</p>
+      <h1>Timing Leak Detector</h1>
+      <p class="lede">Run a bounded comparison against the built-in vulnerable and fixed demos.</p>
+    </header>
+
+    <main id="dashboard" class="dashboard" aria-busy="true">
+      <section class="panel" aria-labelledby="controls-heading">
+        <h2 id="controls-heading">Start a demo scan</h2>
+        <form id="scan-form">
+          <div class="field-group">
+            <label for="target-select">Target</label>
+            <select id="target-select" name="targetId" required disabled></select>
+          </div>
+          <div class="field-group">
+            <label for="noise-select">Noise preset</label>
+            <select id="noise-select" name="noisePresetId" required disabled></select>
+          </div>
+          <button id="run-button" type="submit" disabled>Run scan</button>
+        </form>
+        <p id="load-status" class="status" role="status" aria-live="polite">Loading demo choices…</p>
+        <p id="error-message" class="error" role="alert" hidden></p>
+      </section>
+
+      <section class="panel" aria-labelledby="progress-heading">
+        <div class="section-heading">
+          <h2 id="progress-heading">Live progress</h2>
+          <p id="scan-status" class="status" role="status" aria-live="polite">Idle</p>
+        </div>
+        <p id="progress-message" class="progress-message">Choose a demo and start a scan.</p>
+        <dl class="counts" aria-label="Current sample counts">
+          <div>
+            <dt>A attempts</dt>
+            <dd id="attempts-a">0</dd>
+          </div>
+          <div>
+            <dt>B attempts</dt>
+            <dd id="attempts-b">0</dd>
+          </div>
+          <div>
+            <dt>A accepted</dt>
+            <dd id="accepted-a">0</dd>
+          </div>
+          <div>
+            <dt>B accepted</dt>
+            <dd id="accepted-b">0</dd>
+          </div>
+          <div>
+            <dt>A discarded</dt>
+            <dd id="discarded-a">0</dd>
+          </div>
+          <div>
+            <dt>B discarded</dt>
+            <dd id="discarded-b">0</dd>
+          </div>
+          <div>
+            <dt>A errors</dt>
+            <dd id="errors-a">0</dd>
+          </div>
+          <div>
+            <dt>B errors</dt>
+            <dd id="errors-b">0</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="panel" aria-labelledby="verdict-heading">
+        <h2 id="verdict-heading">Evidence state</h2>
+        <p id="verdict-badge" class="verdict verdict-idle">Waiting for a scan</p>
+        <p id="evidence-summary">The detector will report the evidence state from the current run.</p>
+        <p id="side-channel-note" class="note">
+          A NO LEAK DETECTED result does not prove universal absence of timing side channels.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
