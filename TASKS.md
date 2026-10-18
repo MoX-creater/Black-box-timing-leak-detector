@@ -158,7 +158,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-03, FR-04, FR-05
 
-### T2.6 — [Must-have] Add the reproducible benchmark runner and unavailable-state contract.
+### [x] T2.6 — [Must-have] Add the reproducible benchmark runner and unavailable-state contract.
 
 - **Description:** Run the detector against real local vulnerable/fixed/noise cases and write provenance-rich results only when a real run is requested.
 - **Acceptance:** `npm run bench` runs offline against local services or reports a clear unavailable state; a real run records seed, configuration, code/dependency version, environment, and measured outputs; no fabricated placeholder appears in `bench/results.json`.
