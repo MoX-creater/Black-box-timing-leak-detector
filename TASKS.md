@@ -166,7 +166,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-02, FR-06, FR-08
 
-### T2.7 — [Must-have] Add deterministic demo/CLI integration coverage.
+### [x] T2.7 — [Must-have] Add deterministic demo/CLI integration coverage.
 
 - **Description:** Exercise the CLI, both demos, status failures, transport errors, seeded noise, and report counters through local services.
 - **Acceptance:** `npm test` passes without live internet; fixtures prove discarded samples never enter statistics, all errors are counted, seeds are recorded, and the report contains no secrets.
