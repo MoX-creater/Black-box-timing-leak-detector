@@ -184,7 +184,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-07, FR-10
 
-### T3.2 — [Must-have] Add bounded run management, rate limiting, and cleanup.
+### [x] T3.2 — [Must-have] Add bounded run management, rate limiting, and cleanup.
 
 - **Description:** Track active scans in memory, enforce start/active limits, expire completed reports, and clean up disconnected or timed-out runs.
 - **Acceptance:** `node --test test/run-manager.test.js` proves excess starts return `429`, active work is bounded, completed state expires, disconnect cleanup runs, and no persistent history is created.

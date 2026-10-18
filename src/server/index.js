@@ -6,9 +6,20 @@ import { createWebApp } from "./app.js";
 export function startWebServer({
   environment = process.env,
   host = process.env.HOST ?? "0.0.0.0",
+  managerOptions = {},
   port = Number(process.env.PORT ?? 3000),
 } = {}) {
-  return createWebApp({ environment }).listen(port, host);
+  const app = createWebApp({ environment, managerOptions });
+  const server = app.listen(port, host);
+  const closeServer = server.close.bind(server);
+  server.close = (callback) => {
+    void app.locals.runManager.shutdown().then(
+      () => closeServer(callback),
+      () => closeServer(callback),
+    );
+    return server;
+  };
+  return server;
 }
 
 function isDirectRun() {

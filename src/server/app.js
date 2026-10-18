@@ -2,16 +2,22 @@ import express from "express";
 
 import { createNoiseConfig } from "../demos/noise.js";
 import {
+  createRunManager,
+  RunManagerError,
+} from "./run-manager.js";
+import {
   createTargetMapFromEnvironment,
   PUBLIC_TARGET_LABELS,
   TARGET_IDS,
 } from "./targets.js";
 
 const API_ERROR_MESSAGES = Object.freeze({
+  "active-run-limit": "Too many scans are running",
   "body-too-large": "Request body is too large",
   "internal-error": "Internal server error",
   "invalid-json": "Request body must contain valid JSON",
   "invalid-scan-request": "Scan request is invalid",
+  "rate-limit-exceeded": "Scan start rate limit exceeded",
 });
 const API_SCAN_FIELDS = Object.freeze(["noisePresetId", "targetId"]);
 const API_SCAN_FIELD_SET = new Set(API_SCAN_FIELDS);
@@ -22,8 +28,6 @@ const NOISE_PRESET_LABELS = Object.freeze({
   none: "No noise",
 });
 const SCAN_BODY_LIMIT = "1kb";
-
-let nextRunNumber = 1;
 
 class ApiError extends Error {
   constructor(code, statusCode) {
@@ -58,13 +62,6 @@ function createPublicNoiseMetadata(environment) {
     id: preset.presetId,
     label: NOISE_PRESET_LABELS[preset.presetId],
   })]);
-}
-
-function allocateRunId() {
-  // This counter is per-process, incremented synchronously, and never derived from input.
-  const runNumber = nextRunNumber;
-  nextRunNumber += 1;
-  return `run-${String(runNumber).padStart(4, "0")}`;
 }
 
 function validateScanRequest(request) {
@@ -109,19 +106,45 @@ function handleApiError(error, _request, response, _next) {
     response.status(error.statusCode).json(createErrorBody(error.code));
     return;
   }
+  if (error instanceof RunManagerError && API_ERROR_MESSAGES[error.code] !== undefined) {
+    response.status(error.statusCode).json(createErrorBody(error.code));
+    return;
+  }
   response.status(500).json(createErrorBody("internal-error"));
 }
 
-export function createWebApp({ environment = process.env } = {}) {
+function parseTrustProxyHops(environment) {
+  const raw = environment.TRUST_PROXY_HOPS ?? "0";
+  if (!/^[0-9]+$/.test(String(raw))) {
+    throw new TypeError("TRUST_PROXY_HOPS must be a non-negative integer");
+  }
+  const hops = Number(raw);
+  if (!Number.isSafeInteger(hops)) {
+    throw new TypeError("TRUST_PROXY_HOPS must be a safe integer");
+  }
+  return hops;
+}
+
+export function createWebApp({ environment = process.env, managerOptions = {} } = {}) {
   const targetMap = createTargetMapFromEnvironment(environment);
+  const trustProxyHops = parseTrustProxyHops(environment);
   const publicMetadata = Object.freeze({
     noisePresets: createPublicNoiseMetadata(environment),
     targets: createPublicTargetMetadata(),
   });
   const app = express();
   app.disable("x-powered-by");
+  // Only Express's trusted-hop parser may use forwarded headers; routes read req.ip.
+  app.set("trust proxy", trustProxyHops > 0 ? trustProxyHops : false);
   app.locals.demoTargets = targetMap;
   app.locals.publicMetadata = publicMetadata;
+  app.locals.runManager = createRunManager({
+    ...managerOptions,
+    environment,
+    noisePresetIds: publicMetadata.noisePresets.map(({ id }) => id),
+    targetMap,
+    trustProxyHops,
+  });
 
   app.use("/api", (_request, response, next) => {
     response.set("Cache-Control", "no-store");
@@ -139,23 +162,26 @@ export function createWebApp({ environment = process.env } = {}) {
   app.post(
     "/api/scans",
     express.json({ limit: SCAN_BODY_LIMIT, strict: true, type: "application/json" }),
-    (request, response) => {
-      const { noisePresetId, targetId } = validateScanRequest(request);
-      const validTarget = Object.hasOwn(targetMap, targetId) ? targetMap[targetId] : undefined;
-      const validPreset = publicMetadata.noisePresets.find(
-        (preset) => preset.id === noisePresetId,
-      );
-      if (!validTarget || !validPreset) {
-        throw new ApiError("invalid-scan-request", 400);
-      }
+    (request, response, next) => {
+      try {
+        const { noisePresetId, targetId } = validateScanRequest(request);
+        const validTarget = Object.hasOwn(targetMap, targetId) ? targetMap[targetId] : undefined;
+        const validPreset = publicMetadata.noisePresets.find(
+          (preset) => preset.id === noisePresetId,
+        );
+        if (!validTarget || !validPreset) {
+          throw new ApiError("invalid-scan-request", 400);
+        }
 
-      // Placeholder status: T3.2 will make this a real managed scan.
-      response.status(202).json({
-        noisePresetId,
-        runId: allocateRunId(),
-        status: "running",
-        targetId,
-      });
+        const run = app.locals.runManager.start({
+          clientKey: request.ip,
+          noisePresetId,
+          targetId,
+        });
+        response.status(202).json(run);
+      } catch (error) {
+        next(error);
+      }
     },
   );
 
@@ -166,3 +192,5 @@ export function createWebApp({ environment = process.env } = {}) {
 
   return app;
 }
+
+export { parseTrustProxyHops };

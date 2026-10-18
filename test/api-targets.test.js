@@ -6,10 +6,11 @@ import { request } from "undici";
 
 import { startWebServer } from "../src/server/index.js";
 
-async function startApiServer({ environment = {} } = {}) {
+async function startApiServer({ environment = {}, managerOptions = {} } = {}) {
   const server = startWebServer({
     environment,
     host: "127.0.0.1",
+    managerOptions,
     port: 0,
   });
   await once(server, "listening");
@@ -87,8 +88,15 @@ test("healthz ignores query strings and remains a static readiness response", as
   }
 });
 
-test("POST /api/scans returns the PLAN running placeholder for a valid start", async () => {
-  const { server, url } = await startApiServer();
+test("POST /api/scans returns the PLAN response for an admitted start", async () => {
+  const { server, url } = await startApiServer({
+    managerOptions: {
+      activePerClient: 2,
+      detectorRunner: async () => {
+        throw new Error("test detector failure");
+      },
+    },
+  });
   try {
     const response = await request(`${url}/api/scans`, {
       method: "POST",
@@ -219,6 +227,44 @@ test("API failures use JSON instead of the default HTML error page", async () =>
     assert.equal(response.statusCode, 404);
     assert.equal(response.headers["cache-control"], "no-store");
     assertApiError(await readJson(response), "invalid-scan-request", "Scan request is invalid");
+  } finally {
+    await closeServer(server);
+  }
+});
+
+test("scan admission limits return the fixed 429 error envelope", async () => {
+  const { server, url } = await startApiServer({
+    managerOptions: {
+      detectorRunner: ({ signal }) => new Promise((resolve) => {
+        if (signal.aborted) {
+          resolve({});
+          return;
+        }
+        signal.addEventListener("abort", () => resolve({}), { once: true });
+      }),
+    },
+  });
+  try {
+    const body = JSON.stringify({ targetId: "vulnerable", noisePresetId: "none" });
+    const first = await request(`${url}/api/scans`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
+    assert.equal(first.statusCode, 202);
+
+    const second = await request(`${url}/api/scans`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
+    assert.equal(second.statusCode, 429);
+    assert.equal(second.headers["cache-control"], "no-store");
+    assertApiError(
+      await readJson(second),
+      "active-run-limit",
+      "Too many scans are running",
+    );
   } finally {
     await closeServer(server);
   }
