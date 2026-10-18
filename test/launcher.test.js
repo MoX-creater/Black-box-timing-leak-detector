@@ -1,11 +1,27 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
+import { createServer as createNetServer } from "node:net";
 
 import { startStack } from "../src/launcher.js";
 
-async function waitForHealth(url) {
-  const deadline = Date.now() + 5000;
+async function findFreePort() {
+  const server = createNetServer();
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  const address = server.address();
+  assert.ok(address && typeof address === "object");
+  const port = address.port;
+  await new Promise((resolve, reject) => {
+    server.close((error) => (error ? reject(error) : resolve()));
+  });
+  return port;
+}
+
+async function waitForHealth(url, { deadlineMs = 30_000, intervalMs = 50 } = {}) {
+  const deadline = Date.now() + deadlineMs;
   while (Date.now() < deadline) {
     try {
       const response = await fetch(url);
@@ -16,19 +32,20 @@ async function waitForHealth(url) {
     } catch {
       // The child processes may still be starting.
     }
-    await new Promise((resolve) => setTimeout(resolve, 25));
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
   }
   throw new Error(`Timed out waiting for ${url}`);
 }
 
 test("launcher starts all processes and forwards termination", async () => {
+  const webPort = await findFreePort();
   const stack = startStack({
-    environment: { ...process.env, HOST: "127.0.0.1", PORT: "3100" },
+    environment: { ...process.env, HOST: "127.0.0.1", PORT: String(webPort) },
     stdio: "ignore",
   });
 
   try {
-    await waitForHealth("http://127.0.0.1:3100/healthz");
+    await waitForHealth(`http://127.0.0.1:${webPort}/healthz`);
     await waitForHealth("http://127.0.0.1:3001/healthz");
     await waitForHealth("http://127.0.0.1:3002/healthz");
     stack.shutdown(0);
