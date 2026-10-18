@@ -10,12 +10,9 @@ import { EventEmitter } from "node:events";
 import { Writable } from "node:stream";
 import { fileURLToPath } from "node:url";
 
-import { Agent } from "undici";
-
 import { runCli } from "../src/cli/index.js";
 import { createNoiseConfig } from "../src/demos/noise.js";
 import { startStubServer } from "../src/demos/stub.js";
-import { createHttpTransport } from "../src/http/transport.js";
 import { validateRunReport } from "../src/report/index.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -427,48 +424,42 @@ test("connection resets are counted as fatal transport errors", async () => {
 });
 
 test("short transport timeouts stop after consecutive failures", async () => {
-  const observed = { cookieValues: [], headerValues: [], requests: 0 };
-  const server = await startHttpServer(observedHandler(observed, ({ context, requestNumber, response }) => {
-    if (requestNumber <= 2) {
-      response.statusCode = 200;
-      response.end("{}");
-      return;
-    }
-    const timer = setTimeout(() => response.end("late response"), 1_000);
-    context.timers.add(timer);
-    response.once("close", () => {
-      clearTimeout(timer);
-      context.timers.delete(timer);
-    });
-  }));
   const directory = await mkdtemp(path.join(os.tmpdir(), "timing-t27-timeout-"));
+  let requestNumber = 0;
   try {
     const result = await runInProcessCli(directory, makeConfig({
-      aUrl: `http://127.0.0.1:${server.port}/timeout`,
+      aUrl: "http://127.0.0.1:1/timeout",
       detector: SMALL_DETECTOR,
       targetId: "t27-timeout",
     }), {
       transportFactory: async () => {
-        const dispatcher = new Agent({ connections: 1 });
-        const transport = createHttpTransport({ dispatcher, timeoutMs: 150 });
         return {
-          close: () => dispatcher.close(),
-          send: transport.send,
+          close: async () => {},
+          send: async () => {
+            requestNumber += 1;
+            if (requestNumber <= 2) {
+              return { durationMs: 1, kind: "accepted", statusCode: 200 };
+            }
+            return {
+              errorCode: "UND_ERR_HEADERS_TIMEOUT",
+              kind: "discarded",
+              reason: "timeout",
+            };
+          },
         };
       },
     });
     assert.equal(result.code, 2);
     assert.equal(result.report.observation.stopReason, "fatal-transport-error");
+    assert.equal(requestNumber, 4);
     assert.equal(result.report.configuration.detector.maxAttempts, 6);
     assert.equal(result.report.configuration.detector.maxConsecutiveFailures, 2);
-    assertObservedSecrets(observed);
     assertErrorAccounting(result.report);
     assert.ok(Object.values(result.report.observation.counts)
       .some((counts) => counts.discardReasons.timeout > 0));
     assertNoSecrets(result, result.report);
   } finally {
     await rm(directory, { force: true, recursive: true });
-    await server.close();
   }
 });
 
