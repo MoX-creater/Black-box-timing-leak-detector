@@ -192,7 +192,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-07, FR-10
 
-### T3.3 — [Must-have] Add snapshot polling and SSE progress events.
+### [x] T3.3 — [Must-have] Add snapshot polling and SSE progress events.
 
 - **Description:** Expose run snapshots plus `scan:started`, `scan:progress`, `scan:complete`, `scan:error`, and `scan:expired` events.
 - **Acceptance:** `node --test test/progress-api.test.js` starts a fake scan, verifies `GET /api/scans/:id`, parses `text/event-stream` events with bounded histogram bins, and confirms a disconnected client does not corrupt the result.

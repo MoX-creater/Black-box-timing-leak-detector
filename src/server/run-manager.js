@@ -43,6 +43,10 @@ export const DEFAULT_ACTIVE_RUNS_WITH_SHARED_CLIENT_IP = 3;
 export const MAX_RATE_LIMIT_KEYS = 1_000;
 export const MAX_RETAINED_RUNS = 64;
 export const HISTOGRAM_BIN_LIMIT = 64;
+export const DEFAULT_HISTOGRAM_BIN_COUNT = 20;
+export const DEFAULT_SSE_DISCONNECT_GRACE_MS = 5_000;
+export const DEFAULT_SSE_KEEPALIVE_MS = 15_000;
+export const MAX_SSE_CONNECTIONS = 8;
 
 export const RUN_FAILURE_CODE = Object.freeze({
   DETECTOR_FAILED: "detector-failed",
@@ -168,6 +172,158 @@ function createDefaultScheduler() {
   };
 }
 
+function validateNonNegativeDuration(value, name) {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new TypeError(`${name} must be a non-negative safe integer`);
+  }
+  return value;
+}
+
+function finiteDurations(values) {
+  return Array.isArray(values)
+    ? values.filter((value) => Number.isFinite(value) && value >= 0)
+    : [];
+}
+
+function emptyPublicCounts() {
+  return {
+    attempts: { a: 0, b: 0 },
+    accepted: { a: 0, b: 0 },
+    discarded: { a: 0, b: 0 },
+    errors: { a: 0, b: 0 },
+  };
+}
+
+function countValue(value) {
+  return Number.isSafeInteger(value) && value >= 0 ? value : 0;
+}
+
+function groupCount(progress, label) {
+  const group = progress?.counts?.[label];
+  const discardReasons = group?.discardReasons;
+  const errors = discardReasons && typeof discardReasons === "object"
+    ? countValue(discardReasons.error) + countValue(discardReasons.timeout)
+    : 0;
+  return {
+    attempts: countValue(group?.attempts),
+    accepted: countValue(group?.accepted),
+    discarded: countValue(group?.discarded),
+    errors,
+  };
+}
+
+function histogramBins(values, minimum, maximum, binCount) {
+  if (values.length === 0) {
+    return [];
+  }
+  if (minimum === maximum) {
+    return [{ count: values.length, endMs: maximum, startMs: minimum }];
+  }
+  const width = (maximum - minimum) / binCount;
+  const bins = Array.from({ length: binCount }, (_, index) => ({
+    count: 0,
+    endMs: index === binCount - 1 ? maximum : minimum + ((index + 1) * width),
+    startMs: minimum + (index * width),
+  }));
+  for (const value of values) {
+    const index = Math.min(binCount - 1, Math.floor((value - minimum) / width));
+    bins[index].count += 1;
+  }
+  return bins;
+}
+
+function createHistograms(samples) {
+  const a = finiteDurations(samples?.a);
+  const b = finiteDurations(samples?.b);
+  if (a.length + b.length === 0) {
+    return { a: [], b: [] };
+  }
+  let minimum = Infinity;
+  let maximum = -Infinity;
+  for (const group of [a, b]) {
+    for (const value of group) {
+      minimum = Math.min(minimum, value);
+      maximum = Math.max(maximum, value);
+    }
+  }
+  const binCount = Math.min(DEFAULT_HISTOGRAM_BIN_COUNT, HISTOGRAM_BIN_LIMIT);
+  return {
+    a: histogramBins(a, minimum, maximum, binCount),
+    b: histogramBins(b, minimum, maximum, binCount),
+  };
+}
+
+function captureProgress(progress) {
+  const counts = {
+    a: groupCount(progress, "a"),
+    b: groupCount(progress, "b"),
+  };
+  const samples = {
+    a: finiteDurations(progress?.samples?.a),
+    b: finiteDurations(progress?.samples?.b),
+  };
+  const hasSamples = Array.isArray(progress?.samples?.a)
+    || Array.isArray(progress?.samples?.b);
+  const histograms = createHistograms(samples);
+  if (hasSamples) {
+    counts.a.accepted = samples.a.length;
+    counts.b.accepted = samples.b.length;
+  }
+  return {
+    counts,
+    histograms,
+    lookIndex: countValue(progress?.lookIndex ?? progress?.lookHistory),
+  };
+}
+
+function cloneHistograms(histograms) {
+  return {
+    a: (histograms?.a ?? []).map((bin) => ({ ...bin })),
+    b: (histograms?.b ?? []).map((bin) => ({ ...bin })),
+  };
+}
+
+function cloneProgress(progress) {
+  const counts = progress?.counts ?? emptyPublicCounts();
+  if (counts.a && counts.b) {
+    return {
+      accepted: {
+        a: countValue(counts.a.accepted),
+        b: countValue(counts.b.accepted),
+      },
+      attempts: {
+        a: countValue(counts.a.attempts),
+        b: countValue(counts.b.attempts),
+      },
+      discarded: {
+        a: countValue(counts.a.discarded),
+        b: countValue(counts.b.discarded),
+      },
+      errors: {
+        a: countValue(counts.a.errors),
+        b: countValue(counts.b.errors),
+      },
+    };
+  }
+  return {
+    accepted: { ...(counts.accepted ?? { a: 0, b: 0 }) },
+    attempts: { ...(counts.attempts ?? { a: 0, b: 0 }) },
+    discarded: { ...(counts.discarded ?? { a: 0, b: 0 }) },
+    errors: { ...(counts.errors ?? { a: 0, b: 0 }) },
+  };
+}
+
+function emptyCapturedProgress() {
+  return {
+    counts: {
+      a: { accepted: 0, attempts: 0, discarded: 0, errors: 0 },
+      b: { accepted: 0, attempts: 0, discarded: 0, errors: 0 },
+    },
+    histograms: { a: [], b: [] },
+    lookIndex: 0,
+  };
+}
+
 function createRateLimiter({ limit, maxKeys, now, windowMs }) {
   const timestamps = new Map();
 
@@ -252,6 +408,97 @@ function copyPublicRecord(record) {
   };
 }
 
+const FAILURE_MESSAGES = Object.freeze({
+  [RUN_FAILURE_CODE.DETECTOR_FAILED]: "The scan detector failed",
+  [RUN_FAILURE_CODE.INTERNAL_FAILED]: "The scan failed internally",
+  [RUN_FAILURE_CODE.REPORT_BUILD_FAILED]: "The scan report could not be built",
+  [RUN_FAILURE_CODE.RUN_TIMEOUT]: "The scan exceeded its time limit",
+});
+
+function failureMessage(code) {
+  return FAILURE_MESSAGES[code] ?? "The scan failed";
+}
+
+function reportInference(record) {
+  const inference = record.report?.inference;
+  const observation = record.report?.observation;
+  return {
+    sensitivityMs: Number.isFinite(inference?.sensitivityMs) ? inference.sensitivityMs : null,
+    stopReason: typeof observation?.stopReason === "string" ? observation.stopReason : null,
+    verdict: typeof inference?.verdict === "string" ? inference.verdict : null,
+  };
+}
+
+// Public snapshots are deliberately allowlisted. They never serialize the
+// client key, run seed, request metadata, internal hosts/ports, or raw errors.
+function publicSnapshot(record) {
+  const progress = record.progress ?? emptyCapturedProgress();
+  const inference = record.status === "complete" ? reportInference(record) : null;
+  const snapshot = {
+    histograms: cloneHistograms(progress.histograms),
+    progress: cloneProgress(progress),
+    runId: record.runId,
+    status: record.status,
+    verdict: inference?.verdict ?? null,
+  };
+  if (record.status === "complete") {
+    snapshot.inference = inference;
+    snapshot.reportUrl = `/api/scans/${encodeURIComponent(record.runId)}/report`;
+  } else if (record.status === "failed") {
+    snapshot.failureCode = record.failureCode;
+  }
+  return snapshot;
+}
+
+function startedEvent(record) {
+  return {
+    noisePresetId: record.noisePresetId,
+    runId: record.runId,
+    targetId: record.targetId,
+  };
+}
+
+function progressEvent(record) {
+  const progress = record.progress ?? emptyCapturedProgress();
+  const publicProgress = cloneProgress(progress);
+  return {
+    accepted: publicProgress.accepted,
+    attempts: publicProgress.attempts,
+    discarded: publicProgress.discarded,
+    errors: publicProgress.errors,
+    histograms: cloneHistograms(progress.histograms),
+    lookIndex: progress.lookIndex,
+    runId: record.runId,
+    status: record.status,
+  };
+}
+
+function terminalEvent(record) {
+  if (record.status === "complete") {
+    const inference = reportInference(record);
+    return {
+      event: "scan:complete",
+      payload: {
+        reportUrl: `/api/scans/${encodeURIComponent(record.runId)}/report`,
+        runId: record.runId,
+        sensitivityMs: inference.sensitivityMs,
+        status: "complete",
+        stopReason: inference.stopReason,
+        verdict: inference.verdict,
+      },
+    };
+  }
+  return {
+    event: "scan:error",
+    payload: {
+      code: record.failureCode ?? RUN_FAILURE_CODE.INTERNAL_FAILED,
+      message: failureMessage(record.failureCode),
+      runId: record.runId,
+      status: "failed",
+    },
+  };
+}
+
 export function createRunManager({
   activePerClient = DEFAULT_ACTIVE_PER_CLIENT,
   activeRuns,
@@ -267,6 +514,7 @@ export function createRunManager({
   maxRetainedRuns = MAX_RETAINED_RUNS,
   requestTimeoutMs,
   scheduler = createDefaultScheduler(),
+  sseDisconnectGraceMs = DEFAULT_SSE_DISCONNECT_GRACE_MS,
   startsPerWindow = DEFAULT_STARTS_PER_WINDOW,
   targetMap,
   transportFactory = ({ dispatcher, timeoutMs }) => {
@@ -305,6 +553,10 @@ export function createRunManager({
   );
   const resolvedRetentionMs = validatePositiveInteger(reportRetentionMs, "reportRetentionMs");
   const resolvedMaxRetainedRuns = validatePositiveInteger(maxRetainedRuns, "maxRetainedRuns");
+  const resolvedSseDisconnectGraceMs = validateNonNegativeDuration(
+    sseDisconnectGraceMs,
+    "sseDisconnectGraceMs",
+  );
   const resolvedRateWindowMs = validatePositiveInteger(rateWindowMs, "rateWindowMs");
   const resolvedStartsPerWindow = validatePositiveInteger(startsPerWindow, "startsPerWindow");
   const resolvedActivePerClient = validatePositiveInteger(activePerClient, "activePerClient");
@@ -333,6 +585,7 @@ export function createRunManager({
 
   const runs = new Map();
   const retained = new Map();
+  const expired = new Map();
   const activeClientCounts = new Map();
   const executions = new Set();
   const executionsByRunId = new Map();
@@ -387,22 +640,94 @@ export function createRunManager({
     }
   }
 
+  function clearSubscriberTimer(record) {
+    if (record.subscriberTimer !== undefined) {
+      scheduler.clearTimeout(record.subscriberTimer);
+      record.subscriberTimer = undefined;
+    }
+  }
+
+  function notify(record, event, payload) {
+    for (const subscriber of [...record.subscribers]) {
+      try {
+        subscriber.listener(event, payload);
+      } catch {
+        // A disconnected or test double response must not break another
+        // subscriber or the run's cleanup path.
+        removeSubscriber(record, subscriber);
+      }
+    }
+  }
+
+  function notifyTerminal(record) {
+    if (record.terminalEvent) {
+      return;
+    }
+    const terminal = terminalEvent(record);
+    record.terminalEvent = terminal.event;
+    record.terminalPayload = terminal.payload;
+    clearSubscriberTimer(record);
+    const subscribers = [...record.subscribers];
+    record.subscribers.clear();
+    for (const subscriber of subscribers) {
+      subscriber.active = false;
+      try {
+        subscriber.listener(terminal.event, terminal.payload);
+      } catch {
+        // The response owns its own close/error handling.
+      }
+    }
+  }
+
+  function markExpired(record) {
+    if (record.expired) {
+      return;
+    }
+    record.expired = true;
+    clearSubscriberTimer(record);
+    if (record.retentionTimer !== undefined) {
+      scheduler.clearTimeout(record.retentionTimer);
+      record.retentionTimer = undefined;
+    }
+    if (record.terminalEvent) {
+      // Terminal streams already closed; the expired marker supports a later
+      // SSE attachment without retaining the report or its raw observations.
+      expired.set(record.runId, true);
+    } else {
+      record.terminalEvent = "scan:expired";
+      record.terminalPayload = { runId: record.runId, status: "expired" };
+      const subscribers = [...record.subscribers];
+      record.subscribers.clear();
+      for (const subscriber of subscribers) {
+        subscriber.active = false;
+        try {
+          subscriber.listener(record.terminalEvent, record.terminalPayload);
+        } catch {
+          // The response owns its own close/error handling.
+        }
+      }
+      expired.set(record.runId, true);
+    }
+    while (expired.size > resolvedMaxRetainedRuns) {
+      expired.delete(expired.keys().next().value);
+    }
+  }
+
   function scheduleExpiry(record) {
     if (retained.size >= resolvedMaxRetainedRuns && !retained.has(record.runId)) {
       const oldestRunId = retained.keys().next().value;
       const oldest = retained.get(oldestRunId);
-      if (oldest?.retentionTimer !== undefined) {
-        scheduler.clearTimeout(oldest.retentionTimer);
-        oldest.retentionTimer = undefined;
+      if (oldest) {
+        markExpired(oldest);
+        retained.delete(oldestRunId);
       }
-      retained.delete(oldestRunId);
     }
     record.expiresAt = currentTime() + resolvedRetentionMs;
     record.retentionTimer = scheduler.setTimeout(() => {
       if (retained.get(record.runId) === record) {
         retained.delete(record.runId);
       }
-      record.retentionTimer = undefined;
+      markExpired(record);
     }, resolvedRetentionMs);
     retained.set(record.runId, record);
   }
@@ -415,6 +740,7 @@ export function createRunManager({
     record.failureCode = failureCode;
     record.report = null;
     scheduleExpiry(record);
+    notifyTerminal(record);
   }
 
   function releaseActive(record) {
@@ -422,10 +748,36 @@ export function createRunManager({
       return;
     }
     record.activeReleased = true;
+    clearSubscriberTimer(record);
     if (runs.get(record.runId) === record) {
       runs.delete(record.runId);
     }
     decrementClient(record.clientKey);
+  }
+
+  function abortUnobserved(record) {
+    if (record.discardOnFinish || record.status !== "running") {
+      return;
+    }
+    record.discardOnFinish = true;
+    clearRunTimer(record);
+    clearSubscriberTimer(record);
+    record.controller.abort();
+    record.requests = undefined;
+    releaseActive(record);
+  }
+
+  function scheduleUnobservedAbort(record) {
+    if (record.subscribers.size !== 0 || record.status !== "running") {
+      return;
+    }
+    clearSubscriberTimer(record);
+    record.subscriberTimer = scheduler.setTimeout(() => {
+      record.subscriberTimer = undefined;
+      if (record.subscribers.size === 0) {
+        abortUnobserved(record);
+      }
+    }, resolvedSseDisconnectGraceMs);
   }
 
   function clearRunTimer(record) {
@@ -442,7 +794,8 @@ export function createRunManager({
         detectorResult = await detectorRunner({
           config: { ...WEB_DETECTOR_CONFIG, seed: record.seed },
           onProgress: (progress) => {
-            record.progress = progress;
+            record.progress = captureProgress(progress);
+            notify(record, "scan:progress", progressEvent(record));
           },
           requests: record.requests,
           send: transport.send,
@@ -485,6 +838,7 @@ export function createRunManager({
       record.status = "complete";
       record.failureCode = null;
       scheduleExpiry(record);
+      notifyTerminal(record);
     } catch {
       fail(record, RUN_FAILURE_CODE.INTERNAL_FAILED);
     } finally {
@@ -500,10 +854,7 @@ export function createRunManager({
     for (const [runId, record] of retained) {
       if (record.expiresAt <= time) {
         retained.delete(runId);
-        if (record.retentionTimer !== undefined) {
-          scheduler.clearTimeout(record.retentionTimer);
-          record.retentionTimer = undefined;
-        }
+        markExpired(record);
       }
     }
   }
@@ -541,7 +892,7 @@ export function createRunManager({
       failureCode: null,
       noise,
       noisePresetId,
-      progress: null,
+      progress: emptyCapturedProgress(),
       report: null,
       requests,
       retentionTimer: undefined,
@@ -550,6 +901,10 @@ export function createRunManager({
       seed,
       startedAt: timestampFrom(() => time),
       status: "running",
+      subscriberTimer: undefined,
+      subscribers: new Set(),
+      terminalEvent: null,
+      terminalPayload: null,
       targetId,
     };
     runs.set(runId, record);
@@ -558,12 +913,14 @@ export function createRunManager({
       record.runTimer = scheduler.setTimeout(() => {
         record.timedOut = true;
         record.discardOnFinish = true;
+        clearSubscriberTimer(record);
         record.controller.abort();
         record.status = "failed";
         record.failureCode = RUN_FAILURE_CODE.RUN_TIMEOUT;
         record.report = null;
         record.requests = undefined;
         scheduleExpiry(record);
+        notifyTerminal(record);
         releaseActive(record);
       }, resolvedMaxRunDurationMs);
 
@@ -598,6 +955,76 @@ export function createRunManager({
     return record ? copyPublicRecord(record) : null;
   }
 
+  function getSnapshot(runId) {
+    sweep();
+    const record = runs.get(runId) ?? retained.get(runId);
+    if (record) {
+      return publicSnapshot(record);
+    }
+    if (expired.has(runId)) {
+      return {
+        histograms: { a: [], b: [] },
+        progress: cloneProgress({ counts: emptyPublicCounts() }),
+        runId,
+        status: "expired",
+        verdict: null,
+      };
+    }
+    return null;
+  }
+
+  function removeSubscriber(record, subscriber) {
+    if (!subscriber.active) {
+      return false;
+    }
+    subscriber.active = false;
+    record.subscribers.delete(subscriber);
+    if (!record.terminalEvent) {
+      scheduleUnobservedAbort(record);
+    }
+    return true;
+  }
+
+  function subscribe(runId, listener) {
+    assertFunction(listener, "listener");
+    sweep();
+    const record = runs.get(runId) ?? retained.get(runId);
+    if (!record) {
+      if (expired.has(runId)) {
+        listener("scan:expired", { runId, status: "expired" });
+        return { unsubscribe: () => false };
+      }
+      return null;
+    }
+
+    clearSubscriberTimer(record);
+    if (record.status !== "running") {
+      listener("scan:started", startedEvent(record));
+      if (record.progress) {
+        listener("scan:progress", progressEvent(record));
+      }
+      if (record.terminalEvent && record.terminalPayload) {
+        listener(record.terminalEvent, { ...record.terminalPayload });
+      }
+      return { unsubscribe: () => false };
+    }
+
+    const subscriber = { active: true, listener };
+    record.subscribers.add(subscriber);
+    listener("scan:started", startedEvent(record));
+    if (record.progress) {
+      listener("scan:progress", progressEvent(record));
+    }
+    return {
+      unsubscribe: () => removeSubscriber(record, subscriber),
+    };
+  }
+
+  function subscriberCount(runId) {
+    const record = runs.get(runId);
+    return record?.subscribers.size ?? 0;
+  }
+
   function waitFor(runId) {
     return executionsByRunId.get(runId) ?? Promise.resolve(get(runId));
   }
@@ -609,6 +1036,7 @@ export function createRunManager({
     }
     record.discardOnFinish = true;
     clearRunTimer(record);
+    clearSubscriberTimer(record);
     record.controller.abort();
     record.requests = undefined;
     releaseActive(record);
@@ -644,7 +1072,20 @@ export function createRunManager({
     for (const record of runs.values()) {
       record.discardOnFinish = true;
       clearRunTimer(record);
+      clearSubscriberTimer(record);
       record.controller.abort();
+      record.terminalEvent = "scan:expired";
+      record.terminalPayload = { runId: record.runId, status: "expired" };
+      const subscribers = [...record.subscribers];
+      record.subscribers.clear();
+      for (const subscriber of subscribers) {
+        subscriber.active = false;
+        try {
+          subscriber.listener(record.terminalEvent, record.terminalPayload);
+        } catch {
+          // Shutdown continues even if a response is already disconnected.
+        }
+      }
       releaseActive(record);
     }
     runs.clear();
@@ -655,6 +1096,7 @@ export function createRunManager({
       }
     }
     retained.clear();
+    expired.clear();
     activeClientCounts.clear();
     executionsByRunId.clear();
     executions.clear();
@@ -668,12 +1110,16 @@ export function createRunManager({
     close: shutdown,
     disconnect,
     get,
+    getSnapshot,
     histogramBinLimit: HISTOGRAM_BIN_LIMIT,
     limiterKeyCount: () => rateLimiter.keyCount(),
     maxActiveRuns: resolvedActiveRuns,
     maxRetainedRuns: resolvedMaxRetainedRuns,
     maxRunDurationMs: resolvedMaxRunDurationMs,
     requestTimeoutMs: resolvedRequestTimeoutMs,
+    sseDisconnectGraceMs: resolvedSseDisconnectGraceMs,
+    subscribe,
+    subscriberCount,
     shutdown,
     start,
     sweep,

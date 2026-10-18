@@ -3,6 +3,8 @@ import express from "express";
 import { createNoiseConfig } from "../demos/noise.js";
 import {
   createRunManager,
+  MAX_SSE_CONNECTIONS,
+  DEFAULT_SSE_KEEPALIVE_MS,
   RunManagerError,
 } from "./run-manager.js";
 import {
@@ -16,8 +18,11 @@ const API_ERROR_MESSAGES = Object.freeze({
   "body-too-large": "Request body is too large",
   "internal-error": "Internal server error",
   "invalid-json": "Request body must contain valid JSON",
+  "invalid-run-id": "Scan ID is invalid",
   "invalid-scan-request": "Scan request is invalid",
   "rate-limit-exceeded": "Scan start rate limit exceeded",
+  "run-not-found": "Scan run was not found",
+  "sse-connection-limit": "Too many live scan connections",
 });
 const API_SCAN_FIELDS = Object.freeze(["noisePresetId", "targetId"]);
 const API_SCAN_FIELD_SET = new Set(API_SCAN_FIELDS);
@@ -28,6 +33,9 @@ const NOISE_PRESET_LABELS = Object.freeze({
   none: "No noise",
 });
 const SCAN_BODY_LIMIT = "1kb";
+const RUN_ID_PATTERN = /^run-[0-9]+$/;
+const SSE_KEEPALIVE_MS = DEFAULT_SSE_KEEPALIVE_MS;
+const TERMINAL_SSE_EVENTS = new Set(["scan:complete", "scan:error", "scan:expired"]);
 
 class ApiError extends Error {
   constructor(code, statusCode) {
@@ -125,6 +133,51 @@ function parseTrustProxyHops(environment) {
   return hops;
 }
 
+function validateRunId(runId) {
+  if (!RUN_ID_PATTERN.test(runId)) {
+    throw new ApiError("invalid-run-id", 400);
+  }
+  return runId;
+}
+
+function setSseHeaders(response) {
+  response.status(200).set({
+    "Cache-Control": "no-cache, no-store, no-transform",
+    Connection: "keep-alive",
+    "Content-Type": "text/event-stream; charset=utf-8",
+    "X-Accel-Buffering": "no",
+  });
+  if (typeof response.flushHeaders === "function") {
+    response.flushHeaders();
+  }
+}
+
+function canWriteSse(response) {
+  return !response.destroyed && !response.writableEnded;
+}
+
+export function writeSseEvent(response, event, payload) {
+  if (!canWriteSse(response)) {
+    return false;
+  }
+  try {
+    return response.write(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`) !== false;
+  } catch {
+    return false;
+  }
+}
+
+export function writeSseComment(response, comment = "keepalive") {
+  if (!canWriteSse(response)) {
+    return false;
+  }
+  try {
+    return response.write(`: ${comment}\n\n`) !== false;
+  } catch {
+    return false;
+  }
+}
+
 export function createWebApp({ environment = process.env, managerOptions = {} } = {}) {
   const targetMap = createTargetMapFromEnvironment(environment);
   const trustProxyHops = parseTrustProxyHops(environment);
@@ -132,6 +185,8 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
     noisePresets: createPublicNoiseMetadata(environment),
     targets: createPublicTargetMetadata(),
   });
+  const sseScheduler = managerOptions.scheduler ?? { clearTimeout, setTimeout };
+  let sseConnectionCount = 0;
   const app = express();
   app.disable("x-powered-by");
   // Only Express's trusted-hop parser may use forwarded headers; routes read req.ip.
@@ -184,6 +239,112 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
       }
     },
   );
+
+  app.get("/api/scans/:runId", (request, response, next) => {
+    try {
+      const runId = validateRunId(request.params.runId);
+      const snapshot = app.locals.runManager.getSnapshot(runId);
+      if (!snapshot) {
+        throw new ApiError("run-not-found", 404);
+      }
+      response.json(snapshot);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Do not put compression middleware before this route: buffering/compressing
+  // an SSE stream prevents timely progress delivery and keepalive comments.
+  app.get("/api/scans/:runId/events", (request, response, next) => {
+    let subscription;
+    let keepaliveTimer;
+    let cleaned = false;
+    let connected = false;
+
+    const cleanup = (terminal = false) => {
+      if (cleaned) {
+        return;
+      }
+      cleaned = true;
+      if (keepaliveTimer !== undefined) {
+        sseScheduler.clearTimeout(keepaliveTimer);
+        keepaliveTimer = undefined;
+      }
+      sseConnectionCount -= 1;
+      connected = false;
+      if (!terminal) {
+        subscription?.unsubscribe();
+      }
+    };
+
+    const onEvent = (event, payload) => {
+      if (!writeSseEvent(response, event, payload)) {
+        cleanup();
+        if (!response.destroyed && !response.writableEnded) {
+          response.destroy();
+        }
+        return;
+      }
+      if (TERMINAL_SSE_EVENTS.has(event)) {
+        cleanup(true);
+        if (!response.writableEnded) {
+          response.end();
+        }
+      }
+    };
+
+    try {
+      const runId = validateRunId(request.params.runId);
+      const snapshot = app.locals.runManager.getSnapshot(runId);
+      if (!snapshot) {
+        throw new ApiError("run-not-found", 404);
+      }
+      if (sseConnectionCount >= MAX_SSE_CONNECTIONS) {
+        throw new ApiError("sse-connection-limit", 429);
+      }
+
+      setSseHeaders(response);
+      sseConnectionCount += 1;
+      connected = true;
+      response.once("close", () => cleanup());
+      response.once("error", () => cleanup());
+      request.once("aborted", () => cleanup());
+      subscription = app.locals.runManager.subscribe(runId, onEvent);
+      if (cleaned) {
+        subscription?.unsubscribe();
+      }
+      if (!subscription) {
+        cleanup();
+        if (!response.writableEnded) {
+          response.end();
+        }
+        return;
+      }
+
+      const scheduleKeepalive = () => {
+        if (cleaned) {
+          return;
+        }
+        keepaliveTimer = sseScheduler.setTimeout(() => {
+          keepaliveTimer = undefined;
+          if (!writeSseComment(response)) {
+            cleanup();
+            if (!response.destroyed && !response.writableEnded) {
+              response.destroy();
+            }
+            return;
+          }
+          scheduleKeepalive();
+        }, SSE_KEEPALIVE_MS);
+      };
+      scheduleKeepalive();
+    } catch (error) {
+      if (connected && !cleaned) {
+        cleanup();
+      }
+      next(error);
+    }
+  });
 
   app.use("/api", (_request, response) => {
     response.status(404).json(createErrorBody("invalid-scan-request"));

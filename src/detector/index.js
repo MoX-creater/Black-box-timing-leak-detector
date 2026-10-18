@@ -168,6 +168,12 @@ function progressSnapshot({ counts, lookHistory, samples, warmupRecords }) {
     counts: cloneCounts(counts),
     lookHistory: lookHistory.length,
     warmupRecords: warmupRecords.length,
+    // Optional progress-only data for bounded live histogram consumers. The
+    // detector result/report contract does not retain or expose this field.
+    samples: {
+      a: [...samples.a],
+      b: [...samples.b],
+    },
   };
 }
 
