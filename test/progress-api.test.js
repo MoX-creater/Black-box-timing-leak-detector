@@ -385,7 +385,7 @@ test("polling and late SSE attachment expose the approved public event contract"
     assert.match(reportResponse.headers["content-type"], /^application\/json; charset=utf-8/);
     assert.match(
       reportResponse.headers["content-disposition"],
-      /attachment; filename=timing-scan-run-0001\.json/,
+      /attachment; filename="?timing-leak-report\.json"?/,
     );
     assert.deepEqual(await reportResponse.body.json(), publicReport("LEAK"));
 
@@ -395,9 +395,9 @@ test("polling and late SSE attachment expose the approved public event contract"
       error: { code: "run-not-found", message: "Scan run was not found" },
     });
     const invalidReport = await request(`${url}/api/scans/not-a-run/report`);
-    assert.equal(invalidReport.statusCode, 400);
+    assert.equal(invalidReport.statusCode, 404);
     assert.deepEqual(await invalidReport.body.json(), {
-      error: { code: "invalid-run-id", message: "Scan ID is invalid" },
+      error: { code: "run-not-found", message: "Scan run was not found" },
     });
     const serialized = JSON.stringify(snapshot);
     for (const forbidden of ["web-scan-run", "127.0.0.1", "3001", "demo-password"]) {

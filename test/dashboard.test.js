@@ -291,12 +291,17 @@ test("static dashboard assets have CSP, safe headers, and explicit route isolati
 
     const benchmarkResults = await request(`${url}/bench/results.json`);
     assert.equal(benchmarkResults.statusCode, 404);
+    assert.equal(benchmarkResults.headers["cache-control"], "no-store");
     assert.deepEqual(await benchmarkResults.body.json(), {
       error: {
         code: "benchmark-data-unavailable",
         message: "Benchmark data is not available",
       },
     });
+
+    const benchmarkScriptSource = await request(`${url}/bench/run.js`);
+    assert.equal(benchmarkScriptSource.statusCode, 404);
+    await benchmarkScriptSource.body.text();
 
     const health = await request(`${url}/healthz`);
     assert.equal(health.statusCode, 200);

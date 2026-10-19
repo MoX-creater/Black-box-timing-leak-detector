@@ -1,0 +1,231 @@
+{
+  "schemaVersion": "1.0",
+  "status": "complete",
+  "reason": null,
+  "provenance": {
+    "benchmarkStatus": "TBD until a real full run is completed",
+    "baselineConfig": {
+      "thresholdMs": 5,
+      "note": "Synthetic test-only baseline configuration; NOT measured benchmark evidence."
+    },
+    "codeCommit": "0000000000000000000000000000000000000000",
+    "cpu": "synthetic test-only CPU",
+    "cpuCount": 2,
+    "detectorConfig": {
+      "alphaTotal": 0.05,
+      "bootstrapReplicates": 100,
+      "lookBatchPerGroup": 2,
+      "materialDiscardRateDifference": 0.2,
+      "maxAttempts": 20,
+      "maxConsecutiveFailures": 3,
+      "maxDiscardRate": 0.5,
+      "maxValidPerGroup": 4,
+      "minAttemptsForDiscardRate": 2,
+      "minValidPerGroup": 2,
+      "quantile": 0.1,
+      "targetPower": 0.8
+    },
+    "dependencies": { "express": "5.3.0", "undici": "8.12.2" },
+    "freshDemoProcessPerCell": true,
+    "noiseSequenceStartsAtRequest": 1,
+    "noiseConfigs": {
+      "none": {
+        "benchmarkStatus": "TBD",
+        "jitter": 0,
+        "presetId": "none",
+        "spikeMultiplier": 0,
+        "spikeProbability": 0
+      }
+    },
+    "nodeVersion": "v22.23.3",
+    "notes": "Synthetic test-only fixture; NOT measured benchmark evidence. Numeric examples and stored Wilson intervals test rendering and validation only.",
+    "os": { "arch": "x64", "platform": "linux", "release": "synthetic-test-only" },
+    "packageVersion": "0.1.0",
+    "runnerCommand": "node bench/run.js --config synthetic-test-only.json --yes-full-run",
+    "smoke": false,
+    "trialTimeoutMs": 30000,
+    "trialSeeds": ["synthetic-seed-01"],
+    "matrix": {
+      "noisePresets": ["none"],
+      "seeds": ["synthetic-seed-01"],
+      "targets": ["vulnerable", "fixed"],
+      "trialsPerSeed": 3
+    }
+  },
+  "trials": [
+    {
+      "counts": {
+        "a": { "accepted": 4, "attempts": 5, "discarded": 1, "discardReasons": { "timeout": 1 } },
+        "b": { "accepted": 4, "attempts": 4, "discarded": 0, "discardReasons": {} }
+      },
+      "discarded": 1,
+      "durationMs": 250.5,
+      "errors": 1,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.2,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 0,
+      "verdict": "LEAK",
+      "seed": "synthetic-seed-01"
+    },
+    {
+      "counts": {
+        "a": { "accepted": 0, "attempts": 0, "discarded": 0, "discardReasons": {} },
+        "b": { "accepted": 0, "attempts": 0, "discarded": 0, "discardReasons": {} }
+      },
+      "discarded": 0,
+      "durationMs": 20.5,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": null,
+      "status": "completed",
+      "stopReason": "warmup-failed",
+      "targetId": "vulnerable",
+      "trialIndex": 1,
+      "verdict": "INCONCLUSIVE",
+      "seed": "synthetic-seed-01"
+    },
+    {
+      "counts": null,
+      "discarded": 0,
+      "durationMs": 50.5,
+      "errors": 1,
+      "errorCode": "BENCHMARK_TRIAL_FAILED",
+      "noisePresetId": "none",
+      "sensitivityMs": null,
+      "status": "failed",
+      "stopReason": "trial-failed",
+      "targetId": "vulnerable",
+      "trialIndex": 2,
+      "verdict": null,
+      "seed": "synthetic-seed-01"
+    },
+    {
+      "counts": {
+        "a": { "accepted": 4, "attempts": 4, "discarded": 0, "discardReasons": {} },
+        "b": { "accepted": 4, "attempts": 4, "discarded": 0, "discardReasons": {} }
+      },
+      "discarded": 0,
+      "durationMs": 225.5,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.2,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 0,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "synthetic-seed-01"
+    },
+    {
+      "counts": {
+        "a": { "accepted": 1, "attempts": 3, "discarded": 2, "discardReasons": { "timeout": 2 } },
+        "b": { "accepted": 2, "attempts": 3, "discarded": 1, "discardReasons": { "status-mismatch": 1 } }
+      },
+      "discarded": 3,
+      "durationMs": 210.5,
+      "errors": 2,
+      "noisePresetId": "none",
+      "sensitivityMs": null,
+      "status": "completed",
+      "stopReason": "data-quality-failure",
+      "targetId": "fixed",
+      "trialIndex": 1,
+      "verdict": "INCONCLUSIVE",
+      "seed": "synthetic-seed-01"
+    },
+    {
+      "counts": {
+        "a": { "accepted": 1, "attempts": 1, "discarded": 0, "discardReasons": {} },
+        "b": { "accepted": 0, "attempts": 0, "discarded": 0, "discardReasons": {} }
+      },
+      "discarded": 0,
+      "durationMs": 30000.5,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": null,
+      "status": "failed",
+      "stopReason": "timeout",
+      "targetId": "fixed",
+      "trialIndex": 2,
+      "verdict": null,
+      "seed": "synthetic-seed-01"
+    }
+  ],
+  "aggregates": [
+    {
+      "completedCount": 2,
+      "detectionRate": {
+        "rate": 0.3333333333333333,
+        "successes": 1,
+        "trials": 3,
+        "wilson95": { "lower": 0.0614903152761605, "upper": 0.7923450448735121 }
+      },
+      "failedCount": 1,
+      "falsePositiveRate": null,
+      "inconclusiveRate": {
+        "rate": 0.3333333333333333,
+        "successes": 1,
+        "trials": 3,
+        "wilson95": { "lower": 0.0614903152761605, "upper": 0.7923450448735121 }
+      },
+      "noisePresetId": "none",
+      "targetId": "vulnerable",
+      "trialCount": 3
+    },
+    {
+      "completedCount": 2,
+      "detectionRate": null,
+      "failedCount": 1,
+      "falsePositiveRate": {
+        "rate": 0,
+        "successes": 0,
+        "trials": 3,
+        "wilson95": { "lower": 0, "upper": 0.5615060804490177 }
+      },
+      "inconclusiveRate": {
+        "rate": 0.3333333333333333,
+        "successes": 1,
+        "trials": 3,
+        "wilson95": { "lower": 0.0614903152761605, "upper": 0.7923450448735121 }
+      },
+      "noisePresetId": "none",
+      "targetId": "fixed",
+      "trialCount": 3
+    }
+  ],
+  "baseline": [
+    {
+      "absoluteDifferenceMs": 10.25,
+      "durationMs": 500.5,
+      "failedRequests": 0,
+      "flagged": true,
+      "meanA": 10.25,
+      "meanB": 20.5,
+      "noisePresetId": "none",
+      "note": "Synthetic test-only baseline configuration; NOT measured benchmark evidence.",
+      "samplesPerGroup": 20,
+      "seed": "baseline-synthetic-vulnerable",
+      "status": "completed",
+      "targetId": "vulnerable",
+      "thresholdMs": 5
+    },
+    {
+      "absoluteDifferenceMs": null,
+      "durationMs": 600.5,
+      "failedRequests": 20,
+      "flagged": null,
+      "meanA": 10.25,
+      "meanB": null,
+      "noisePresetId": "none",
+      "note": "Synthetic test-only baseline configuration; NOT measured benchmark evidence.",
+      "samplesPerGroup": 20,
+      "seed": "baseline-synthetic-fixed",
+      "status": "failed",
+      "targetId": "fixed",
+      "thresholdMs": 5
+    }
+  ]
+}

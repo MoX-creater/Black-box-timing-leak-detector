@@ -1,7 +1,7 @@
 import { createSeededPrng } from "../prng.js";
 import { buildRequests } from "../http/request.js";
 import { createNoiseConfig } from "../demos/noise.js";
-import { WEB_BUILD_INFO } from "./build-info.js";
+import { createWebBuildInfo } from "./build-info.js";
 
 export const RUN_SEED_DOMAIN = "web-scan-run";
 export const SERVER_SCAN_SEED = "web-scan-seed";
@@ -43,6 +43,7 @@ export const DEFAULT_ACTIVE_RUNS_WITH_TRUSTED_CLIENT_IP = 2;
 export const DEFAULT_ACTIVE_RUNS_WITH_SHARED_CLIENT_IP = 3;
 export const MAX_RATE_LIMIT_KEYS = 1_000;
 export const MAX_RETAINED_RUNS = 64;
+export const MAX_EXPIRED_RUN_IDS = 64;
 export const HISTOGRAM_BIN_LIMIT = 64;
 export const DEFAULT_HISTOGRAM_BIN_COUNT = 20;
 export const DEFAULT_SSE_DISCONNECT_GRACE_MS = 5_000;
@@ -92,6 +93,36 @@ async function defaultReportBuilder(options) {
 async function defaultReportValidator(report) {
   const { validateRunReport } = await import("../report/index.js");
   return validateRunReport(report);
+}
+
+function webRequestMetadata(metadata) {
+  return Object.fromEntries(["bodyBytes", "headerNames", "method", "path"]
+    .filter((field) => Object.hasOwn(metadata, field))
+    .map((field) => [field, metadata[field]]));
+}
+
+function sanitizeWebReport(report) {
+  const sanitized = structuredClone(report);
+  const configuration = sanitized.configuration;
+  const target = configuration?.target;
+  if (target?.redactedMetadata) {
+    // CLI redaction deliberately retains hostname. Public demo reports use a
+    // narrower named-field projection, without changing the shared schema.
+    configuration.target = {
+      id: target.id,
+      kind: target.kind,
+      redactedMetadata: {
+        a: webRequestMetadata(target.redactedMetadata.a),
+        b: webRequestMetadata(target.redactedMetadata.b),
+      },
+    };
+  }
+  if (configuration?.noise) {
+    // Only the selected preset is public. Demo-process tuning and seeds are
+    // not observations of this run and must not leak through extra fields.
+    configuration.noise = { presetId: configuration.noise.presetId };
+  }
+  return sanitized;
 }
 
 function createLazyDefaultTransport({ dispatcher, timeoutMs }) {
@@ -628,9 +659,9 @@ export function createRunManager({
   activePerClient = DEFAULT_ACTIVE_PER_CLIENT,
   activeRuns,
   agentFactory = () => undefined,
-  buildInfo = WEB_BUILD_INFO,
   detectorRunner = defaultDetectorRunner,
   environment = process.env,
+  buildInfo = createWebBuildInfo(environment),
   maxRunDurationMs,
   noisePresetIds = ["none"],
   now = () => Date.now(),
@@ -854,7 +885,7 @@ export function createRunManager({
       }
       expired.set(record.runId, true);
     }
-    while (expired.size > resolvedMaxRetainedRuns) {
+    while (expired.size > MAX_EXPIRED_RUN_IDS) {
       expired.delete(expired.keys().next().value);
     }
   }
@@ -961,20 +992,20 @@ export function createRunManager({
       }
 
       try {
-        const report = await reportBuilder({
+        const report = sanitizeWebReport(await reportBuilder({
           buildVersion: buildInfo.buildVersion,
           detectorConfig: { ...WEB_DETECTOR_CONFIG, seed: record.seed },
           detectorResult,
           detectorVersion: buildInfo.detectorVersion,
           endedAt: timestampFrom(currentTime),
-          noise: record.noise,
+          noise: { presetId: record.noisePresetId },
           requestMetadata: record.requests,
           requestTemplateIds: REQUEST_TEMPLATE_IDS,
           requestWarnings: record.requests.warnings,
           runSeed: record.seed,
           startedAt: record.startedAt,
           target: { id: record.targetId, kind: "demo" },
-        });
+        }));
         await reportValidator(report);
         record.report = report;
       } catch {

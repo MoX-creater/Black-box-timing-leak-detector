@@ -16,11 +16,11 @@
       </p>
     </header>
 
-    <main class="dashboard" aria-busy="true">
+    <main class="dashboard">
       <section id="benchmark-unavailable" class="panel" aria-labelledby="benchmark-status-heading">
         <h2 id="benchmark-status-heading">Benchmark data</h2>
         <p id="benchmark-status" class="status" role="status" aria-live="polite">
-          Loading benchmark data…
+          benchmark data not yet available
         </p>
         <p id="benchmark-reason" class="note"></p>
       </section>
@@ -28,11 +28,13 @@
       <section id="benchmark-results" class="panel" aria-labelledby="benchmark-results-heading" hidden>
         <h2 id="benchmark-results-heading">Complete benchmark run</h2>
         <p id="benchmark-results-note" class="note"></p>
+        <p class="note">Sensitivity threshold: TBD. Default calibration: TBD. Observations from one run are not permanent product guarantees.</p>
 
         <h3>Provenance and configuration</h3>
         <div id="benchmark-provenance"></div>
 
-        <h3>Measured cell results</h3>
+        <h3>Observed cell results</h3>
+        <p class="note">Rates use all attempted trials, including failures. Wilson intervals are stored runner outputs.</p>
         <div id="benchmark-aggregates"></div>
 
         <h3>Baseline comparison</h3>

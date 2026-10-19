@@ -14,6 +14,7 @@ import {
   PUBLIC_TARGET_LABELS,
   TARGET_IDS,
 } from "./targets.js";
+import { validateBenchmarkArtifact } from "./benchmark-results.js";
 
 const API_ERROR_MESSAGES = Object.freeze({
   "active-run-limit": "Too many scans are running",
@@ -291,7 +292,10 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
 
   app.get("/api/scans/:runId/report", (request, response, next) => {
     try {
-      const runId = validateRunId(request.params.runId);
+      const runId = request.params.runId;
+      if (RUN_ID_PATTERN.exec(runId)?.[0] !== runId) {
+        throw new ApiError("run-not-found", 404);
+      }
       const report = app.locals.runManager.getReport(runId);
       if (!report) {
         const snapshot = app.locals.runManager.getSnapshot(runId);
@@ -300,7 +304,8 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
         }
         throw new ApiError("run-not-found", 404);
       }
-      response.attachment(`timing-scan-${runId}.json`);
+      response.set("Cache-Control", "no-store");
+      response.attachment("timing-leak-report.json");
       response.type("application/json").json(report);
     } catch (error) {
       next(error);
@@ -409,8 +414,7 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
     try {
       const contents = await readFile(BENCHMARK_RESULTS, "utf8");
       const results = JSON.parse(contents);
-      const { validateBenchmarkResults } = await import("../../bench/run.js");
-      validateBenchmarkResults(results);
+      validateBenchmarkArtifact(results);
       response.set({
         "Cache-Control": "no-store",
         "Content-Type": "application/json; charset=utf-8",

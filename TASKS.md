@@ -219,7 +219,7 @@ change; never combine unrelated tasks in one commit.
 ### [x] T3.6 — [Must-have] Add active JSON report download and the Benchmarks page.
 
 - **Description:** Serve the current run's redacted report and render real `bench/results.json` or its explicit unavailable state.
-- **Acceptance:** `GET /api/scans/:id/report` returns valid JSON with download headers during retention and no secrets; `/benchmarks` displays the unavailable state when results are absent and displays provenance/measured fields when real results exist.
+- **Acceptance:** `GET /api/scans/:id/report` returns the same validated redacted run report with fixed download headers during retention, distinguishes bounded expired IDs from unknown IDs, and exposes no hosts, ports, client keys, or server-stream seeds; `/benchmarks` serves only the validated fixed artifact route, displays the explicit unavailable state for missing/unreadable/invalid/unavailable data, and displays stored provenance, trial counts, Wilson intervals, and baseline fields without recalculation when complete data exists.
 - **Dependencies:** T2.6, T3.2, T3.4
 - **Estimate:** M
 - **Linked PRD:** FR-05, FR-07, FR-08

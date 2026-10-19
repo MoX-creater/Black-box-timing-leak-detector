@@ -1,8 +1,4 @@
-import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-
-const PROJECT_ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
 function packageVersion() {
   try {
@@ -15,29 +11,24 @@ function packageVersion() {
   }
 }
 
-function gitCommit() {
-  try {
-    const commit = execFileSync("git", ["rev-parse", "HEAD"], {
-      cwd: PROJECT_ROOT,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-    return commit.length > 0 ? commit : "unavailable";
-  } catch {
-    return "unavailable";
-  }
+const version = packageVersion();
+// Accept full SHA-1 or SHA-256 object IDs, never refs or guessed abbreviations.
+const COMMIT_PATTERN = /^(?:[a-f0-9]{40}|[a-f0-9]{64})$/i;
+
+export function createWebBuildInfo(environment = process.env) {
+  const suppliedCommit = environment.GIT_COMMIT;
+  const commit = typeof suppliedCommit === "string"
+    && COMMIT_PATTERN.exec(suppliedCommit)?.[0] === suppliedCommit
+    ? suppliedCommit
+    : "unavailable";
+  // The schema has no commit field, so the build string always states its
+  // supplied commit or explicitly records that it is unavailable.
+  return Object.freeze({
+    buildVersion: `web-${version}+git.${commit}`,
+    detectorVersion: `detector-${version}`,
+    gitCommit: commit,
+    packageVersion: version,
+  });
 }
 
-const version = packageVersion();
-const commit = gitCommit();
-const gitSuffix = commit === "unavailable" ? "" : `+git.${commit}`;
-
-// The report schema has version strings but no separate commit field. Keep the
-// package version authoritative and attach the observed commit only when git
-// is available; never substitute a guessed build identifier.
-export const WEB_BUILD_INFO = Object.freeze({
-  buildVersion: `web-${version}${gitSuffix}`,
-  detectorVersion: `detector-${version}`,
-  gitCommit: commit,
-  packageVersion: version,
-});
+export const WEB_BUILD_INFO = createWebBuildInfo();
