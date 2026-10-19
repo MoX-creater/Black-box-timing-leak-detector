@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { readFile } from "node:fs/promises";
-import test from "node:test";
+import { syncBuiltinESMExports } from "node:module";
+import test, { mock } from "node:test";
 import { once } from "node:events";
+import { fileURLToPath } from "node:url";
 
 import { request } from "undici";
 
@@ -9,6 +12,25 @@ import { createDashboard } from "../public/app.js";
 import { startWebServer } from "../src/server/index.js";
 
 const PUBLIC_DIR = new URL("../public/", import.meta.url);
+const BENCHMARK_RESULTS_PATH = fileURLToPath(new URL("../bench/results.json", import.meta.url));
+const MISSING_BENCHMARK_RESULTS_PATH = fileURLToPath(
+  new URL("./fixtures/missing-benchmark-results.json", import.meta.url),
+);
+
+function redirectBenchmarkReadToMissingPath() {
+  const originalReadFile = fs.promises.readFile;
+  const readFileMock = mock.method(fs.promises, "readFile", (filePath, options) => (
+    originalReadFile(
+      filePath === BENCHMARK_RESULTS_PATH ? MISSING_BENCHMARK_RESULTS_PATH : filePath,
+      options,
+    )
+  ));
+  syncBuiltinESMExports();
+  return () => {
+    readFileMock.mock.restore();
+    syncBuiltinESMExports();
+  };
+}
 
 async function readPublicFile(name) {
   return readFile(new URL(name, PUBLIC_DIR), "utf8");
@@ -253,6 +275,7 @@ function createDashboardHarness(fetchImpl) {
 test("static dashboard assets have CSP, safe headers, and explicit route isolation", async () => {
   const { server, url } = await startApiServer();
   const csp = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
+  const restoreBenchmarkRead = redirectBenchmarkReadToMissingPath();
   try {
     const page = await request(`${url}/`);
     assert.equal(page.statusCode, 200);
@@ -316,6 +339,7 @@ test("static dashboard assets have CSP, safe headers, and explicit route isolati
       await missing.body.text();
     }
   } finally {
+    restoreBenchmarkRead();
     await closeServer(server);
   }
 });
