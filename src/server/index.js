@@ -11,6 +11,13 @@ export function startWebServer({
 } = {}) {
   const app = createWebApp({ environment, managerOptions });
   const server = app.listen(port, host);
+  server.once("listening", () => {
+    void app.locals.runManager.warm().catch(() => {
+      // A failed background warmup is retried by the first scan. The scan
+      // lifecycle still owns the user-visible failure classification.
+      console.error("Web runtime warmup failed; first scan will retry");
+    });
+  });
   const closeServer = server.close.bind(server);
   server.close = (callback) => {
     void app.locals.runManager.shutdown().then(

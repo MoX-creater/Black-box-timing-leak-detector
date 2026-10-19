@@ -113,6 +113,9 @@ function createLazyDefaultTransport({ dispatcher, timeoutMs }) {
   }
 
   return {
+    // Resolve the same lazy path used by send so the shared Agent and its
+    // undici transport are ready before a first scan needs them.
+    warm: () => ensureTransport().then(() => undefined),
     send: (...args) => ensureTransport().then((transport) => transport.send(...args)),
     close: async () => {
       if (!transportPromise) {
@@ -733,6 +736,7 @@ export function createRunManager({
   let closing = false;
   let resourcesClosed = false;
   let shutdownPromise;
+  let warmPromise;
 
   function currentTime() {
     const value = now();
@@ -740,6 +744,20 @@ export function createRunManager({
       throw new TypeError("now must return a finite number");
     }
     return value;
+  }
+
+  function warm() {
+    if (!warmPromise) {
+      warmPromise = Promise.all([
+        import("../detector/index.js"),
+        import("../report/index.js"),
+        typeof transport.warm === "function" ? transport.warm() : undefined,
+      ]).then(() => undefined).catch((error) => {
+        warmPromise = undefined;
+        throw error;
+      });
+    }
+    return warmPromise;
   }
 
   function allocateRunId() {
@@ -917,6 +935,10 @@ export function createRunManager({
 
   async function execute(record) {
     try {
+      // The web entrypoint starts this same promise after listen. Awaiting it
+      // here closes the race where the first scan arrives before background
+      // module/dispatcher warming has finished.
+      await warm();
       let detectorResult;
       try {
         detectorResult = await detectorRunner({
@@ -1261,6 +1283,7 @@ export function createRunManager({
     shutdown,
     start,
     sweep,
+    warm,
     waitFor,
   };
 }
