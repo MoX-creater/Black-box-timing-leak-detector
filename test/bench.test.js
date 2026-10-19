@@ -13,6 +13,7 @@ import {
   validateBenchmarkResults,
   wilsonInterval,
 } from "../bench/run.js";
+import { validateBenchmarkArtifact } from "../src/server/benchmark-results.js";
 
 function streams() {
   let stdout = "";
@@ -56,6 +57,7 @@ test("full-run estimate is computed from the configured matrix", () => {
 test("runner smoke output has completed trials and unavailable baseline", async () => {
   const results = await runBenchmark({ smoke: true });
   validateBenchmarkResults(results);
+  validateBenchmarkArtifact(results);
   assert.equal(results.status, "complete");
   assert.equal(results.provenance.freshDemoProcessPerCell, true);
   assert.equal(results.provenance.noiseSequenceStartsAtRequest, 1);
@@ -63,6 +65,8 @@ test("runner smoke output has completed trials and unavailable baseline", async 
   assert.equal(typeof results.provenance.notes, "string");
   assert.equal(results.trials.length, 2);
   assert.ok(results.trials.every((trial) => trial.status === "completed"));
+  assert.ok(results.trials.every((trial) => results.provenance.matrix.seeds.includes(trial.seed)));
+  assert.ok(results.trials.every((trial) => typeof trial.derivedSeed === "string"));
   assert.ok(results.baseline.every((entry) => entry.status === "unavailable"));
   assert.ok(results.aggregates.every((aggregate) => aggregate.inconclusiveRate !== null));
 });

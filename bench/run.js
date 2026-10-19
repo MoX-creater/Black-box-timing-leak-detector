@@ -380,13 +380,17 @@ function summarizeCounts(counts) {
   return { discarded, errors };
 }
 
-async function runTrial(config, targetId, presetId, seed, trialIndex) {
+async function runTrial(config, targetId, presetId, baseSeed, derivedSeed, trialIndex) {
   const started = performance.now();
   let processInfo;
   let agent;
   let timedOut = false;
   try {
-    processInfo = await startDemoProcess(targetId, presetId, deriveSeed(seed, "noise", targetId, presetId, trialIndex));
+    processInfo = await startDemoProcess(
+      targetId,
+      presetId,
+      deriveSeed(derivedSeed, "noise", targetId, presetId, trialIndex),
+    );
     const requests = requestPair(processInfo.baseUrl);
     agent = new Agent({ connections: 1 });
     const transport = createHttpTransport({ dispatcher: agent });
@@ -398,7 +402,7 @@ async function runTrial(config, targetId, presetId, seed, trialIndex) {
     let detectorResult;
     try {
       detectorResult = await runDetector({
-        config: { ...config.detector, seed },
+        config: { ...config.detector, seed: derivedSeed },
         onProgress: () => {},
         requests,
         send: transport.send,
@@ -421,7 +425,8 @@ async function runTrial(config, targetId, presetId, seed, trialIndex) {
       targetId,
       trialIndex,
       verdict: timedOut ? null : detectorResult.verdict,
-      seed,
+      seed: baseSeed,
+      derivedSeed,
     };
   } catch (error) {
     return {
@@ -437,7 +442,8 @@ async function runTrial(config, targetId, presetId, seed, trialIndex) {
       targetId,
       trialIndex,
       verdict: null,
-      seed,
+      seed: baseSeed,
+      derivedSeed,
     };
   } finally {
     if (agent) {
@@ -642,8 +648,15 @@ export async function runBenchmark({
   for (const { noisePresetId, targetId } of cellDefinitions(config)) {
     for (const [seedIndex, baseSeed] of config.seeds.entries()) {
       for (let trialIndex = 0; trialIndex < config.trialsPerSeed; trialIndex += 1) {
-        const seed = deriveSeed(baseSeed, "trial", targetId, noisePresetId, seedIndex, trialIndex);
-        trials.push(await runTrial(config, targetId, noisePresetId, seed, trialIndex));
+        const derivedSeed = deriveSeed(baseSeed, "trial", targetId, noisePresetId, seedIndex, trialIndex);
+        trials.push(await runTrial(
+          config,
+          targetId,
+          noisePresetId,
+          baseSeed,
+          derivedSeed,
+          trialIndex,
+        ));
       }
     }
     baseline.push(await runBaseline(
