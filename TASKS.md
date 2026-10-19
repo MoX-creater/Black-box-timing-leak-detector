@@ -234,7 +234,7 @@ change; never combine unrelated tasks in one commit.
 
 ## Day 4 — Evidence, live deployment, and release verification
 
-### T4.1 — [Must-have] Run the real benchmark matrix and record only measured outputs.
+### [x] T4.1 — [Must-have] Run the real benchmark matrix and record only measured outputs.
 
 - **Description:** Execute vulnerable, fixed, and configured-noise benchmark cases with recorded seeds and environment provenance.
 - **Acceptance:** `npm run bench` completes against the local stack; every committed `bench/results.json` record is produced by that script and contains seed/configuration/version/environment/observations; if a case cannot run, it remains explicitly unavailable rather than fabricated.

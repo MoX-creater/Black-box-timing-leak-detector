@@ -1,0 +1,5367 @@
+{
+  "aggregates": [
+    {
+      "completedCount": 30,
+      "detectionRate": {
+        "rate": 1,
+        "successes": 30,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0.8864829086095221,
+          "upper": 1
+        }
+      },
+      "failedCount": 0,
+      "falsePositiveRate": null,
+      "inconclusiveRate": {
+        "rate": 0,
+        "successes": 0,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0,
+          "upper": 0.113517091390478
+        }
+      },
+      "noisePresetId": "none",
+      "targetId": "vulnerable",
+      "trialCount": 30
+    },
+    {
+      "completedCount": 30,
+      "detectionRate": {
+        "rate": 1,
+        "successes": 30,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0.8864829086095221,
+          "upper": 1
+        }
+      },
+      "failedCount": 0,
+      "falsePositiveRate": null,
+      "inconclusiveRate": {
+        "rate": 0,
+        "successes": 0,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0,
+          "upper": 0.113517091390478
+        }
+      },
+      "noisePresetId": "low",
+      "targetId": "vulnerable",
+      "trialCount": 30
+    },
+    {
+      "completedCount": 30,
+      "detectionRate": {
+        "rate": 1,
+        "successes": 30,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0.8864829086095221,
+          "upper": 1
+        }
+      },
+      "failedCount": 0,
+      "falsePositiveRate": null,
+      "inconclusiveRate": {
+        "rate": 0,
+        "successes": 0,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0,
+          "upper": 0.113517091390478
+        }
+      },
+      "noisePresetId": "high",
+      "targetId": "vulnerable",
+      "trialCount": 30
+    },
+    {
+      "completedCount": 30,
+      "detectionRate": null,
+      "failedCount": 0,
+      "falsePositiveRate": {
+        "rate": 0,
+        "successes": 0,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0,
+          "upper": 0.113517091390478
+        }
+      },
+      "inconclusiveRate": {
+        "rate": 0.03333333333333333,
+        "successes": 1,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0.0059084379948573795,
+          "upper": 0.16670751396958874
+        }
+      },
+      "noisePresetId": "none",
+      "targetId": "fixed",
+      "trialCount": 30
+    },
+    {
+      "completedCount": 30,
+      "detectionRate": null,
+      "failedCount": 0,
+      "falsePositiveRate": {
+        "rate": 0,
+        "successes": 0,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0,
+          "upper": 0.113517091390478
+        }
+      },
+      "inconclusiveRate": {
+        "rate": 0.03333333333333333,
+        "successes": 1,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0.0059084379948573795,
+          "upper": 0.16670751396958874
+        }
+      },
+      "noisePresetId": "low",
+      "targetId": "fixed",
+      "trialCount": 30
+    },
+    {
+      "completedCount": 30,
+      "detectionRate": null,
+      "failedCount": 0,
+      "falsePositiveRate": {
+        "rate": 0,
+        "successes": 0,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0,
+          "upper": 0.113517091390478
+        }
+      },
+      "inconclusiveRate": {
+        "rate": 0.06666666666666667,
+        "successes": 2,
+        "trials": 30,
+        "wilson95": {
+          "lower": 0.01847663532769335,
+          "upper": 0.21323817721072091
+        }
+      },
+      "noisePresetId": "high",
+      "targetId": "fixed",
+      "trialCount": 30
+    }
+  ],
+  "baseline": [
+    {
+      "absoluteDifferenceMs": null,
+      "flagged": null,
+      "meanA": null,
+      "meanB": null,
+      "noisePresetId": "none",
+      "note": "Unavailable until a benchmark threshold is explicitly configured.",
+      "samplesPerGroup": 20,
+      "seed": null,
+      "status": "unavailable",
+      "targetId": "vulnerable",
+      "thresholdMs": null
+    },
+    {
+      "absoluteDifferenceMs": null,
+      "flagged": null,
+      "meanA": null,
+      "meanB": null,
+      "noisePresetId": "low",
+      "note": "Unavailable until a benchmark threshold is explicitly configured.",
+      "samplesPerGroup": 20,
+      "seed": null,
+      "status": "unavailable",
+      "targetId": "vulnerable",
+      "thresholdMs": null
+    },
+    {
+      "absoluteDifferenceMs": null,
+      "flagged": null,
+      "meanA": null,
+      "meanB": null,
+      "noisePresetId": "high",
+      "note": "Unavailable until a benchmark threshold is explicitly configured.",
+      "samplesPerGroup": 20,
+      "seed": null,
+      "status": "unavailable",
+      "targetId": "vulnerable",
+      "thresholdMs": null
+    },
+    {
+      "absoluteDifferenceMs": null,
+      "flagged": null,
+      "meanA": null,
+      "meanB": null,
+      "noisePresetId": "none",
+      "note": "Unavailable until a benchmark threshold is explicitly configured.",
+      "samplesPerGroup": 20,
+      "seed": null,
+      "status": "unavailable",
+      "targetId": "fixed",
+      "thresholdMs": null
+    },
+    {
+      "absoluteDifferenceMs": null,
+      "flagged": null,
+      "meanA": null,
+      "meanB": null,
+      "noisePresetId": "low",
+      "note": "Unavailable until a benchmark threshold is explicitly configured.",
+      "samplesPerGroup": 20,
+      "seed": null,
+      "status": "unavailable",
+      "targetId": "fixed",
+      "thresholdMs": null
+    },
+    {
+      "absoluteDifferenceMs": null,
+      "flagged": null,
+      "meanA": null,
+      "meanB": null,
+      "noisePresetId": "high",
+      "note": "Unavailable until a benchmark threshold is explicitly configured.",
+      "samplesPerGroup": 20,
+      "seed": null,
+      "status": "unavailable",
+      "targetId": "fixed",
+      "thresholdMs": null
+    }
+  ],
+  "provenance": {
+    "benchmarkStatus": "TBD until a real full run is completed",
+    "baselineConfig": {
+      "note": "Unavailable until a benchmark threshold is explicitly configured.",
+      "thresholdMs": null
+    },
+    "codeCommit": "e2bee6f1df86aac01a8f183762633b88707393d2",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+    "cpuCount": 12,
+    "detectorConfig": {
+      "alphaTotal": 0.05,
+      "bootstrapReplicates": 100,
+      "lookBatchPerGroup": 4,
+      "materialDiscardRateDifference": 0.2,
+      "maxAttempts": 20,
+      "maxConsecutiveFailures": 3,
+      "maxDiscardRate": 0.5,
+      "maxValidPerGroup": 8,
+      "minAttemptsForDiscardRate": 2,
+      "minValidPerGroup": 4,
+      "quantile": 0.1,
+      "targetPower": 0.8
+    },
+    "dependencies": {
+      "express": "5.3.0",
+      "undici": "8.12.2"
+    },
+    "freshDemoProcessPerCell": true,
+    "noiseSequenceStartsAtRequest": 1,
+    "noiseConfigs": {
+      "none": {
+        "benchmarkStatus": "TBD",
+        "jitter": 0,
+        "presetId": "none",
+        "spikeMultiplier": 0,
+        "spikeProbability": 0
+      },
+      "low": {
+        "benchmarkStatus": "TBD",
+        "jitter": 2000,
+        "presetId": "low",
+        "spikeMultiplier": 4,
+        "spikeProbability": 0.02
+      },
+      "high": {
+        "benchmarkStatus": "TBD",
+        "jitter": 8000,
+        "presetId": "high",
+        "spikeMultiplier": 8,
+        "spikeProbability": 0.05
+      }
+    },
+    "nodeVersion": "v24.13.1",
+    "notes": "8 vs 8 budget (matches public web scan); alpha, bootstrap count, quantile and discard limits are TBD pending T4.2 calibration; no thresholds tuned.",
+    "os": {
+      "arch": "x64",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "packageVersion": "0.1.0",
+    "runnerCommand": "node bench/run.js --config config.json --yes-full-run --out results.json --force",
+    "smoke": false,
+    "trialTimeoutMs": 30000,
+    "trialSeeds": [
+      "t4.1-master-v1"
+    ],
+    "matrix": {
+      "noisePresets": [
+        "none",
+        "low",
+        "high"
+      ],
+      "seeds": [
+        "t4.1-master-v1"
+      ],
+      "targets": [
+        "vulnerable",
+        "fixed"
+      ],
+      "trialsPerSeed": 30
+    }
+  },
+  "reason": null,
+  "schemaVersion": "1.0",
+  "status": "complete",
+  "trials": [
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 515.8317999999999,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.46911113848625824,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 0,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-76b7f635"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 412.85529999999994,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.3917515782497814,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 1,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-033572f2"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 422.08979999999997,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.5602880034738537,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 2,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-cc4c6259"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 425.98799999999983,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.0283241023277065,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 3,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f2f2a86d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 415.3238000000001,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.6160699164037599,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 4,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ea3fb4be"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 405.7131000000004,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.6521870822143861,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 5,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e3915f9d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 418.0187000000001,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.945679013127152,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 6,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-afdc68a2"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 411.6134000000002,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.4122941900346464,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 7,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-421ffbea"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 409.89829999999984,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.1453516955822076,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 8,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-cb70743a"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 408.8141999999998,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.28855680795006267,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 9,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f7a5e297"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 407.90279999999984,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.6097089610803256,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 10,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d0d9aad2"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 407.70470000000023,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.5743608537573726,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 11,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-788dd060"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 412.14650000000074,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.1457602320423308,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 12,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-8a23396e"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 414.1081000000004,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.5362494831537759,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 13,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-7890d1a3"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 425.14390000000003,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.8473119030437622,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 14,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-330bd9b9"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 404.6722,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.5860441045656487,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 15,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-90b1f8bf"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 412.03379999999925,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.2545133132694781,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 16,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4cc67771"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 408.8085000000001,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.6295438911693261,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 17,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-0f823fd1"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 414.2506000000003,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.7383982000709349,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 18,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-515cdaf2"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 406.78360000000066,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.24753699088283881,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 19,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d02f7faa"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 408.48519999999917,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.4609852151045259,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 20,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-a1eef59d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 405.9513999999999,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.5969323288298638,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 21,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f3bafea1"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 422.1785,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 2.1265856499634923,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 22,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-eb62c2a3"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 409.9452999999994,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.17588461636116848,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 23,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-de422af8"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 410.02629999999954,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.7425702709438263,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 24,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-b2870390"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 415.46930000000066,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.46516512644276925,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 25,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-cf1ac8b7"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 406.6975000000002,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.5293800888317716,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 26,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-80a62c5e"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 419.4860000000008,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.8510419073389129,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 27,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-b12efce0"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 412.5633999999991,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.4654751571508296,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 28,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-414ee76a"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 402.53909999999996,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.4733736529694401,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 29,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-daf7855e"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 465.6061000000009,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 0.9204806336150737,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 0,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-31d10657"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 449.1965,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.6102842332208118,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 1,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ceb65327"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 430.85609999999906,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 0.8658927844172211,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 2,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-047362cb"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 444.7527000000009,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.4627405143952945,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 3,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d257bc32"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 431.79209999999875,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.4155796463189736,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 4,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-03953792"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 441.35609999999906,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.3587962580740913,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 5,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-93212460"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 450.21460000000116,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.5607324282736925,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 6,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4aa04de1"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 434.72489999999925,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.9647242848321256,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 7,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-9e1e3d4a"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 436.5676999999996,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.03265534511067,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 8,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-21297903"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 445.043700000002,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.4919879973429704,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 9,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d091b27d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 432.1621000000014,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.6117734251748652,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 10,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f0d30256"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 443.3889999999992,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.4053161303369837,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 11,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-adc11a86"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 431.6715000000004,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.8416229116082345,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 12,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e8d60572"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 443.83220000000074,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.1678128991038426,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 13,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-a5ba6fe9"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 443.0064999999995,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.847705118667301,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 14,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-878df9bf"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 437.34349999999904,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 0.804360695645601,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 15,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-73ce6bc4"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 456.16799999999785,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.8176020328240672,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 16,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-6265ce07"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 453.092099999998,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.0765744569397415,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 17,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-17f4d006"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 430.54609999999957,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 0.791759904381132,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 18,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-49d0982d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 430.510199999997,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.011265399508352,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 19,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-6e5c9685"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 444.0797999999995,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.740751951753507,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 20,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-fb6c1b01"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 434.9412999999986,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 0.819759729733379,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 21,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-0cc6e9b6"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 434.5813999999991,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.4315186976147258,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 22,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ed9fc3fd"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 427.2504000000008,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.7743381046122493,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 23,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-45f23142"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 426.9032999999981,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.659590490119287,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 24,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f4810c9f"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 437.15320000000065,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.30287660840846,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 25,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-016980af"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 429.9708000000028,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.611500578660363,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 26,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ef79040c"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 433.2981,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.5418232498359792,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 27,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-09909640"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 438.34939999999915,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.7078700240741842,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 28,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-6d73119c"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 457.66070000000036,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.6763327967721113,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 29,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-18aa6a28"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 525.930900000003,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.716925174261567,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 0,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-dc13f608"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 486.2461000000003,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 6.670992214925112,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 1,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ffceb34f"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 465.51770000000033,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.709504434447407,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 2,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4f10dbed"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 498.7308000000012,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.7740434401351495,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 3,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-dd78ee36"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 503.2377000000015,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.659139457257465,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 4,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-3caf6f2d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 546.4419000000016,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.8716660937007132,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 5,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-5aa2e645"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 542.7044000000024,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.7054752742644874,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 6,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-86137e60"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 564.0897000000004,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.928857698143616,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 7,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-2596fd44"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 547.6454999999987,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.7234677484167507,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 8,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-0ec8765d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 552.1068000000014,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.976350081087683,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 9,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d0dc5198"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 485.3231999999989,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.289874159931777,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 10,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-2c48b42b"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 519.3865000000005,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.3121853152064205,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 11,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-360f4a4c"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 611.2980000000025,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.48441619338477,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 12,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-11ddb881"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 507.43150000000605,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.555472769919088,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 13,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-2e1162e1"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 591.6923999999999,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.509429168722261,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 14,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-a812b4e4"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 544.1294999999955,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.575893687936872,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 15,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-03db5c93"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 523.2097999999969,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.778812727371742,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 16,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-797a2143"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 546.2469000000056,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.110975854962941,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 17,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-09042c2b"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 503.1559000000052,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 7.004636427114531,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 18,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-dfe59084"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 567.1892000000007,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.816857272087725,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 19,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4ccbf2cf"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 544.6425000000017,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 6.544397676807683,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 20,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-acea7fe7"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 647.8080000000045,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 6.460832203673079,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 21,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-7a3410df"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 503.44920000000275,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.118301580619505,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 22,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-9a19d88d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 491.6189000000013,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.9082187212940322,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 23,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-dfb0c6c7"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 538.7187000000049,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.5627306004742376,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 24,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f69033d4"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 488.33610000000044,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.040058646796016,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 25,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-9a44ab77"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 482.16359999999986,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.336976586656104,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 26,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e671d0af"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 481.13760000000184,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.085436926846171,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 27,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-318a1e70"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 581.9801000000007,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 7.409582227267729,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 28,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-c32e1add"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 538.2801999999938,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.064185069435225,
+      "status": "completed",
+      "stopReason": "leak-detected",
+      "targetId": "vulnerable",
+      "trialIndex": 29,
+      "verdict": "LEAK",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-9a84481b"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 648.9953000000023,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.7655159389318832,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 0,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-8312a05b"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 640.1685999999972,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.9750400239139008,
+      "status": "completed",
+      "stopReason": "max-samples-inconclusive",
+      "targetId": "fixed",
+      "trialIndex": 1,
+      "verdict": "INCONCLUSIVE",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-65049c10"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 639.1035999999949,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.5467868036344107,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 2,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-3a01f6c9"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 642.4160999999949,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.1913988139624416,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 3,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-da7e47e5"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 659.2724000000017,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.8746765477403937,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 4,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e1b4f46c"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 644.1080999999976,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.2061868321693687,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 5,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d9c64161"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 639.775999999998,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.8171497113482598,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 6,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-7f51e46a"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 646.5606000000043,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.44841299085486,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 7,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-12104fda"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 661.5889999999999,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.8852344697214161,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 8,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-966b470c"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 664.1794000000009,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.3213861956094732,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 9,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-0604b99c"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 651.972400000006,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.9100129254254293,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 10,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f8de6d4e"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 721.7483999999968,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 3.038469707127481,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 11,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-45ad67be"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 671.1606000000029,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.097133014095001,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 12,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-72907828"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 705.9965000000011,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.693937512603495,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 13,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-97bae8fe"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 846.6659,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.9308347038551671,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 14,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-2bf3b940"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 669.534900000006,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.2908572333449162,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 15,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-0c33fe18"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 656.8568000000014,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.1634070554239586,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 16,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-7fd626d9"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 658.2292999999991,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.3712655650470578,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 17,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-9c4ed652"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 653.401300000005,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.2952528217677388,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 18,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f7179c77"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 649.2386000000042,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.42648470066952326,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 19,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-1e45c749"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 674.0687999999936,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.673920582052244,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 20,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-c4deea6a"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 671.0283999999956,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.851078351327033,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 21,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4a2b0488"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 674.280700000003,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.8999714043693843,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 22,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-6163c2f0"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 645.1606000000029,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.6566457123018726,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 23,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-465f56f9"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 649.6067000000039,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.113979201838345,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 24,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ff3230cc"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 659.6267999999982,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.365089433919507,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 25,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-624a4964"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 656.6125000000029,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.0903358854592684,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 26,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-a8159938"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 655.2218000000066,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.0142171437027094,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 27,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e5659726"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 672.6280999999944,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 0.6476837436033891,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 28,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-b4a0fb39"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 658.632399999995,
+      "errors": 0,
+      "noisePresetId": "none",
+      "sensitivityMs": 1.6170669926380417,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 29,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ad969691"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 667.5649000000049,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.253402309085811,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 0,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e1760d24"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 674.3485999999975,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.1294448846335636,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 1,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-78ade89a"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 669.447500000002,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.4319459228116902,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 2,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-c56b4029"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 660.1730000000025,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.1199788265075798,
+      "status": "completed",
+      "stopReason": "max-samples-inconclusive",
+      "targetId": "fixed",
+      "trialIndex": 3,
+      "verdict": "INCONCLUSIVE",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-a20d3a98"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 662.1823000000004,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.7506512536076293,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 4,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-6849eb84"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 669.3231000000087,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.1614347127250406,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 5,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-9c497d37"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 675.9554999999964,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.2611570273607766,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 6,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-558871cb"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 660.4743000000017,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.1288145824056794,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 7,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-afc5fd4e"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 667.7084999999934,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.2527318484828904,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 8,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-fdd5f4e1"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 672.5483999999997,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.9003586379957633,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 9,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-3748dbdf"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 668.8870000000024,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.2800009664971275,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 10,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-68df4586"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 665.7358999999997,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.0040873380474578,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 11,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-51ddeb8e"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 663.8264999999956,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.863161828068824,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 12,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d016d68b"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 677.709600000002,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.332576562576316,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 13,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-bd8cad31"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 671.2073999999993,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.105945533803253,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 14,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-56485eeb"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 679.9449000000022,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.4654215128189734,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 15,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-b0c977d4"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 665.9670000000042,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.2440668282542675,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 16,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f099d256"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 668.2160000000003,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.6543774604596162,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 17,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-03e0d8a6"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 673.5108999999939,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.3668575766623423,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 18,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-a5cb2eff"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 679.8640000000014,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.6727559216210575,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 19,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-6a30dad2"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 670.1356000000087,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.4638221467672246,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 20,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-60beaf8e"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 667.7551999999996,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.7026459819624769,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 21,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-cf312f13"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 678.1612999999925,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.5179412116343796,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 22,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e7d46f55"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 671.9729999999981,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 3.3467286307935025,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 23,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-cb862c05"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 669.3338000000076,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.8616916186133794,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 24,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e14fe411"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 695.1050000000105,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.7904835779560977,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 25,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-756cf346"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 664.39929999999,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.340277410098112,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 26,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-061f78a9"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 662.5066000000079,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.5866809864763047,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 27,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-53f722bd"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 661.945000000007,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 1.8495919227121926,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 28,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-af5619fa"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 674.1082000000024,
+      "errors": 0,
+      "noisePresetId": "low",
+      "sensitivityMs": 2.402658904238856,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 29,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-49363c05"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 748.0660000000062,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.07000253896174,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 0,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ffd1a975"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 726.7522000000026,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.8082383348712,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 1,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ab056ec0"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 771.104600000006,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.934284980606758,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 2,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-88ee4d1b"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 737.7106000000058,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.754028963967751,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 3,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-c1d3cdbd"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 790.1659999999974,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 6.576716853744281,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 4,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-99472a96"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 716.9934999999969,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 7.42735394296648,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 5,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-1fe6abf0"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 747.7358999999997,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.846563894047607,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 6,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e41fff7a"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 755.9222000000009,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.255658647413753,
+      "status": "completed",
+      "stopReason": "max-samples-inconclusive",
+      "targetId": "fixed",
+      "trialIndex": 7,
+      "verdict": "INCONCLUSIVE",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-953e9170"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 833.1944999999978,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.535749175636771,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 8,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-412f3404"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 761.3824000000022,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.733110631823385,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 9,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-446beb1f"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 772.9116000000067,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.946398079363851,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 10,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4c9e41f6"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 722.4499999999971,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.659205605759207,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 11,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-5e972def"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 729.5415999999968,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.277002891809266,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 12,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d9869046"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 821.7897999999986,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.7545467203214344,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 13,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-87f51849"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 847.005999999994,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.53458027128186,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 14,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-e3bc0620"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 724.1024000000034,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.807726233219554,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 15,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-fc1e0ddd"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 793.5761000000057,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.1627719590521735,
+      "status": "completed",
+      "stopReason": "max-samples-inconclusive",
+      "targetId": "fixed",
+      "trialIndex": 16,
+      "verdict": "INCONCLUSIVE",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4c3697eb"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 766.0384000000049,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.069622350996277,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 17,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-4ea97986"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 858.4319000000105,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.7919500693900385,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 18,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-399a39eb"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 725.6472999999969,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.552525760865909,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 19,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-cec92600"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 708.0746999999974,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 2.9006689240219394,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 20,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-d0e6f720"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 741.658500000005,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 6.218756498920795,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 21,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-298dfcfa"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 712.088699999993,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.482602513323189,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 22,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-020eb4e2"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 732.8206000000064,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.633604939258459,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 23,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-c7d42030"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 736.9465000000055,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.337043308166653,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 24,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-081eeeee"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 824.5702000000019,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 5.745723319089514,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 25,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-ee154983"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 767.1814999999915,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.474436618364647,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 26,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-b99c755d"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 794.398000000001,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.547923076554433,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 27,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-2e7209ad"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 712.5602999999974,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 4.7434862076434445,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 28,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-9b3f87ef"
+    },
+    {
+      "counts": {
+        "a": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        },
+        "b": {
+          "accepted": 8,
+          "attempts": 8,
+          "discarded": 0,
+          "discardReasons": {}
+        }
+      },
+      "discarded": 0,
+      "durationMs": 715.380600000004,
+      "errors": 0,
+      "noisePresetId": "high",
+      "sensitivityMs": 3.382310242895084,
+      "status": "completed",
+      "stopReason": "max-samples-no-leak",
+      "targetId": "fixed",
+      "trialIndex": 29,
+      "verdict": "NO_LEAK_DETECTED",
+      "seed": "t4.1-master-v1",
+      "derivedSeed": "trial-t4.1-master-v1-f43a79b0"
+    }
+  ]
+}
