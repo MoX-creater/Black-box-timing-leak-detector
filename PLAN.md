@@ -5,8 +5,9 @@
 
 ## Uncertain decisions to resolve during implementation
 
-- Candidate low percentile is **p10**; the percentile and interpolation rule must be confirmed by deterministic tests and benchmark evidence.
-- Alpha, target power, bootstrap count, look batch, minimum/maximum samples, timeout, and discard-rate limits are configuration decisions, not measured results; do not publish defaults until benchmarked.
+- The implementation and T4.1 use **p10** with the tested interpolation rule; this is a tested configuration, not comparative calibration of the percentile choice.
+- Alpha, target power, bootstrap count, minimum/maximum sample budgets, timeout, and discard-rate limits remain configuration decisions rather than calibrated defaults. T4.1 recorded one 8-vs-8 configuration and did not vary these candidates.
+- T4.1 supports describing the public 8-vs-8 budget, look batch, and three named presets as tested configuration on the recorded machine/runtime. It does not establish product guarantees, accuracy, or a default sensitivity threshold.
 - The pinned stack does not include Socket.io. Use native SSE for this release; define compatible event names below in case a Socket.io adapter is later approved.
 - Render provides one Docker Web Service, while Compose requires separate demo processes. The planned Render image therefore uses a small Node launcher to supervise three child processes; verify this in the first deployment smoke test.
 
@@ -129,8 +130,9 @@ expires completed reports; it does not create scan history.
 - Candidate low percentile is `q = 0.10`, using one documented interpolation
   algorithm. Report `lowPercentileA`, `lowPercentileB`, signed
   `lowPercentileDeltaMs = Qq(A) - Qq(B)`, and its absolute value.
-- Treat the percentile choice and exact small-sample p-value path as uncertain
-  until known-reference unit tests and real benchmark runs support them.
+- Treat p10/Type 7 and the implemented p-value path as the tested implementation
+  configuration. Do not present either as comparative calibration beyond the
+  known-reference tests and the single T4.1 configuration.
 
 ### Sensitivity / minimum detectable difference
 
@@ -153,8 +155,8 @@ domain-separated `bootstrap` seed stream derived from the run seed.
 bootstrap method, seed stream, sample counts, look alpha, target power, and
 whether the value was unavailable because the samples were insufficient or
 degenerate. Alpha, target power, bootstrap count, and minimum sample sizes are
-configuration values still awaiting benchmark/implementation selection; they
-must not be presented as measured facts.
+configuration values recorded by T4.1 but still awaiting calibrated-default
+selection; they must not be presented as measured facts.
 
 This is an operational approximation for a low-quantile effect, not a universal
 claim about the endpoint.
@@ -179,9 +181,10 @@ claim about the endpoint.
 - Include the stop reason, final counts, p-value/U, effect, sensitivity, and
   warnings in every verdict. A histogram never decides a verdict by itself.
 
-The exact alpha, power, sample budgets, discard limits, and q percentile are
-flagged decisions. They require implementation tests and real benchmark output
-before becoming documented defaults.
+The exact alpha, power, sample budgets, discard limits, and q percentile remain
+flagged calibration decisions. T4.1 is real benchmark output for one selected
+configuration, not comparative evidence sufficient to turn these inputs into
+universal documented defaults.
 
 ## 4. API and CLI contract
 
@@ -381,16 +384,19 @@ allowlist, live or polling progress, exact verdict explanation, and report.
 
 ### Day 4 — evidence and release
 
-**Deliverable:** real benchmark runs, measured sensitivity/default decision,
-statistical regression tests, Docker smoke test, Render deployment, README
-setup/deploy/cold-start instructions, and final safety review.
+**Deliverable:** real benchmark runs, measured sensitivity evidence, any
+justified default decision, statistical regression tests, Docker smoke test,
+Render deployment, README setup/deploy/cold-start instructions, and final
+safety review.
 
 **Cut first if behind:** optional Socket.io adapter, extra chart detail, and
 nonessential copy. Never cut `npm test`, the deployed demo, safety gates,
 benchmark provenance, or honest `INCONCLUSIVE` behavior.
 
-Do not make the next day dependent on a fabricated benchmark result. Keep a
-visible unavailable state until a real run has produced `bench/results.json`.
+Do not make the next day dependent on a fabricated benchmark result. Keep an
+explicit unavailable state when `bench/results.json` is missing or invalid;
+when it is complete, show its scoped observations without turning them into
+product guarantees.
 
 ## 7. Top five technical risks and fallbacks
 

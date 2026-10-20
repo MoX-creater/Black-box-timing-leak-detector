@@ -20,7 +20,7 @@ The product must prefer an honest `INCONCLUSIVE` result over an unsupported clai
 - `NO LEAK DETECTED (sensitivity >= X ms)`; or
 - `INCONCLUSIVE`.
 
-`X` is not a hardcoded product claim. It is a minimum detectable difference computed from the collected run and reported with the actual measured value. The default user-configurable sensitivity threshold remains **TBD, measured in the benchmark** until real benchmark runs establish it.
+`X` is not a hardcoded product claim. It is a minimum detectable difference computed from the collected run and reported with the actual measured value. The default user-configurable sensitivity threshold remains **TBD**: T4.1 records one tested configuration but does not establish a product threshold.
 
 ## 2. Problem and opportunity
 
@@ -251,10 +251,16 @@ created by real runs. Each result must retain enough provenance to identify:
 - environment assumptions that affect timing; and
 - the raw or summarized measured outputs used to set any default.
 
-The benchmark must be used to decide the default sensitivity threshold and to
-record the real behavior of vulnerable, fixed, and noisy demo cases. Until
-that run is complete, the default is explicitly **TBD, measured in benchmark**
-and the UI/docs must not invent a number.
+The benchmark must provide evidence for deciding the default sensitivity
+threshold and record the real behavior of vulnerable, fixed, and noisy demo
+cases. T4.1 completed one real run, but its single detector configuration and
+single machine/runtime do not establish a product threshold. The default
+therefore remains **TBD** until a predeclared selection rule and adequate
+comparative evidence support one; the UI/docs must not invent a number.
+
+T4.1 observations are scoped to its tested built-in targets, `none`/`low`/`high`
+preset configurations, 8-vs-8 detector budget, and recorded Windows/Node
+runtime. They are not product guarantees or accuracy estimates.
 
 The product must distinguish these concepts:
 
@@ -377,12 +383,12 @@ and a short manual smoke test where browser behavior is involved:
 The following must be resolved in code and recorded in the next planning
 artifacts without inventing values in this PRD:
 
-- default sensitivity threshold;
+- default sensitivity threshold (T4.1 did not calibrate one);
 - exact low-percentile definition;
 - statistical significance/evidence constants;
 - minimum and maximum adaptive sample limits;
 - timeout and request concurrency values;
-- named jitter preset values;
+- named jitter preset values (T4.1 tested the existing presets but did not calibrate their values);
 - exact CLI command spelling and JSON schema field names; and
 - the final benchmark run matrix and measured results.
 

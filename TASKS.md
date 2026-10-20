@@ -242,7 +242,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** L
 - **Linked PRD:** FR-02, FR-06, FR-08
 
-### T4.2 — [Must-have] Calibrate documented defaults without changing the approved statistical approach.
+### [x] T4.2 — [Must-have] Calibrate documented defaults without changing the approved statistical approach.
 
 - **Description:** Use real benchmark evidence to choose any default sensitivity/configuration values and update reports/docs while preserving the PRD's Mann-Whitney/low-percentile semantics.
 - **Acceptance:** `npm test` passes reference-value stats, sensitivity, all verdict paths, and benchmark regression fixtures; every new numeric default is traceable to a real benchmark record; any proposed stats-method change is stopped for user approval.

@@ -8,7 +8,8 @@ export const SERVER_SCAN_SEED = "web-scan-seed";
 export const WEB_DETECTOR_CONFIG_STATUS = "TBD";
 
 // These are operational rule inputs, not measured performance claims. Their
-// calibration remains TBD until the real benchmark task records evidence.
+// calibration remains TBD because T4.1 tested one configuration without
+// comparing candidate values.
 // For the mathematical best case of 8 perfectly separated A/B samples, the
 // current continuity-corrected two-sided U rule gives p=0.0009391056991171899;
 // with two looks, alphaAtLook=0.05/2=0.025. This is not benchmark evidence.
