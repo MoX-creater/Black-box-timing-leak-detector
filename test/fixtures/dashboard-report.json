@@ -1,0 +1,32 @@
+{
+  "evidence": {
+    "sensitivityMs": 3.5,
+    "statistics": null,
+    "stopReason": "max-samples-no-leak",
+    "warnings": []
+  },
+  "histograms": {
+    "a": [
+      { "count": 2, "endMs": 2, "startMs": 1 },
+      { "count": 1, "endMs": 3, "startMs": 2 }
+    ],
+    "b": [
+      { "count": 2, "endMs": 2.5, "startMs": 1.5 }
+    ]
+  },
+  "inference": {
+    "sensitivityMs": 3.5,
+    "stopReason": "max-samples-no-leak",
+    "verdict": "NO_LEAK_DETECTED"
+  },
+  "progress": {
+    "accepted": { "a": 3, "b": 2 },
+    "attempts": { "a": 3, "b": 2 },
+    "discarded": { "a": 0, "b": 0 },
+    "errors": { "a": 0, "b": 0 }
+  },
+  "reportUrl": "/api/scans/dashboard-fixed-report/report",
+  "runId": "dashboard-fixed-report",
+  "status": "complete",
+  "verdict": "NO_LEAK_DETECTED"
+}

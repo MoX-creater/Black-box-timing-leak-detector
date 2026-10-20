@@ -224,7 +224,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-05, FR-07, FR-08
 
-### T3.7 — [Nice-to-have] Improve responsive visual polish without changing inference behavior.
+### [x] T3.7 — [Nice-to-have] Improve responsive visual polish without changing inference behavior.
 
 - **Description:** Add accessible labels, responsive layout, verdict color/contrast, and optional histogram animation after the functional flow is complete.
 - **Acceptance:** `npm test` remains green; keyboard navigation reaches controls; the same report produces the same verdict and histogram values before and after the visual change.

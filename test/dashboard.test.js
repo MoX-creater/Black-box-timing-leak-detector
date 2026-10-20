@@ -13,6 +13,7 @@ import { startWebServer } from "../src/server/index.js";
 
 const PUBLIC_DIR = new URL("../public/", import.meta.url);
 const BENCHMARK_RESULTS_PATH = fileURLToPath(new URL("../bench/results.json", import.meta.url));
+const DASHBOARD_REPORT_PATH = fileURLToPath(new URL("./fixtures/dashboard-report.json", import.meta.url));
 const MISSING_BENCHMARK_RESULTS_PATH = fileURLToPath(
   new URL("./fixtures/missing-benchmark-results.json", import.meta.url),
 );
@@ -75,6 +76,21 @@ function response(body, { ok = true, status = 200 } = {}) {
     ok,
     status,
   };
+}
+
+function colorLuminance(hex) {
+  const channels = [0, 2, 4].map((offset) => Number.parseInt(hex.slice(1 + offset, 3 + offset), 16) / 255);
+  const linear = channels.map((channel) => (
+    channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+  ));
+  return (0.2126 * linear[0]) + (0.7152 * linear[1]) + (0.0722 * linear[2]);
+}
+
+function contrastRatio(foreground, background) {
+  const foregroundLuminance = colorLuminance(foreground);
+  const backgroundLuminance = colorLuminance(background);
+  return (Math.max(foregroundLuminance, backgroundLuminance) + 0.05)
+    / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
 }
 
 class FakeElement {
@@ -146,6 +162,7 @@ class FakeDocument {
       "evidence-u-b",
       "histogram-legend",
       "histogram-output",
+      "histogram-text-alternative",
       "histogram-status",
       "load-status",
       "noise-select",
@@ -345,9 +362,11 @@ test("static dashboard assets have CSP, safe headers, and explicit route isolati
 });
 
 test("static dashboard source contract scan names the grep-style safety checks honestly", async () => {
-  const [html, source] = await Promise.all([
+  const [html, source, styles, benchmarksHtml] = await Promise.all([
     readPublicFile("index.html"),
     readPublicFile("app.js"),
+    readPublicFile("styles.css"),
+    readPublicFile("benchmarks.html"),
   ]);
   assert.match(source, /\/api\/targets/);
   assert.match(source, /\/api\/scans/);
@@ -359,6 +378,49 @@ test("static dashboard source contract scan names the grep-style safety checks h
   assert.doesNotMatch(html, /<input[^>]+(?:url|header|body)/i);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /role="alert"/);
+  assert.match(html, /<a class="skip-link" href="#controls-heading">/);
+  assert.match(html, /<main id="dashboard"[^>]+tabindex="-1"/);
+  assert.match(html, /id="progress-message"[^>]+role="status"[^>]+aria-live="polite"/);
+  assert.match(html, /id="histogram-text-alternative"/);
+  assert.match(benchmarksHtml, /<html lang="en">/);
+  assert.match(benchmarksHtml, /name="viewport" content="width=device-width, initial-scale=1"/);
+  assert.match(benchmarksHtml, /<a class="skip-link" href="#benchmark-status-heading">/);
+  assert.match(styles, /:focus-visible/);
+  assert.match(styles, /prefers-reduced-motion: reduce/);
+  assert.match(styles, /@media \(max-width: 41\.99rem\)/);
+  assert.match(styles, /\.report-download[\s\S]*?min-height: 2\.75rem/);
+});
+
+test("dashboard text colors meet WCAG AA contrast on every used background", async (t) => {
+  const source = await readPublicFile("styles.css");
+  const colors = Object.fromEntries(
+    [...source.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6});/gi)].map(([, name, value]) => [name, value]),
+  );
+  const pairs = [
+    ["body text / page", "color-ink", "color-page"],
+    ["body text / panel", "color-ink", "color-panel"],
+    ["eyebrow / page", "color-eyebrow", "color-page"],
+    ["muted text / page", "color-muted", "color-page"],
+    ["muted text / panel", "color-muted", "color-panel"],
+    ["heading text / panel", "color-heading", "color-panel"],
+    ["link text / page", "color-action", "color-page"],
+    ["link text / panel", "color-action", "color-panel"],
+    ["button text / action", "color-panel", "color-action"],
+    ["error text / panel", "color-danger", "color-panel"],
+    ["idle verdict / idle background", "color-muted", "color-idle-bg"],
+    ["running verdict / running background", "color-running-text", "color-running-bg"],
+    ["leak verdict / leak background", "color-leak-text", "color-leak-bg"],
+    ["safe verdict / safe background", "color-safe-text", "color-safe-bg"],
+    ["warning verdict / warning background", "color-warning-text", "color-warning-bg"],
+    ["subtle labels / subtle background", "color-muted", "color-subtle"],
+    ["warning text / panel", "color-warning-text", "color-panel"],
+  ];
+  const results = pairs.map(([label, foregroundName, backgroundName]) => {
+    const ratio = contrastRatio(colors[foregroundName], colors[backgroundName]);
+    t.diagnostic(`${label}: ${ratio.toFixed(2)}:1`);
+    return { backgroundName, foregroundName, label, ratio };
+  });
+  assert.ok(results.every(({ ratio }) => ratio >= 4.5), JSON.stringify(results));
 });
 
 const METADATA = {
@@ -476,6 +538,46 @@ test("dashboard behavior sends only selected IDs and filters stale run events", 
     documentRef.getElementById("side-channel-note").textContent,
     /does not prove universal absence of timing side channels/i,
   );
+  dashboard.destroy();
+});
+
+test("dashboard renders the fixed report fixture without changing verdict or histogram data", async () => {
+  const fixture = JSON.parse(await readFile(DASHBOARD_REPORT_PATH, "utf8"));
+  const post = deferred();
+  const fetchImpl = (url, options = {}) => {
+    if (url === "/api/targets") {
+      return Promise.resolve(response(METADATA));
+    }
+    if (url === "/api/scans" && options.method === "POST") {
+      return post.promise;
+    }
+    if (url === `/api/scans/${fixture.runId}`) {
+      return Promise.resolve(response(fixture));
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+  const { dashboard, documentRef, timers } = createDashboardHarness(fetchImpl);
+  await flushMicrotasks();
+  documentRef.getElementById("scan-form").dispatchEvent({ preventDefault() {}, type: "submit" });
+  post.resolve(response({ runId: fixture.runId, status: "running" }, { status: 202 }));
+  await flushMicrotasks();
+  FakeEventSource.instances[0].fail();
+  await timers.advance(1_000);
+  await flushMicrotasks();
+
+  assert.equal(dashboard.state.verdict, fixture.verdict);
+  assert.equal(
+    documentRef.getElementById("verdict-badge").textContent,
+    `NO LEAK DETECTED (sensitivity >= ${fixture.inference.sensitivityMs.toFixed(2)} ms)`,
+  );
+  assert.deepEqual(dashboard.state.histograms, fixture.histograms);
+  const histogramText = documentRef.getElementById("histogram-text-alternative").textContent;
+  const expectedHistogramText = Object.entries(fixture.histograms)
+    .flatMap(([group, bins]) => bins.map((bin) => (
+      `${group.toUpperCase()}: ${bin.startMs.toFixed(2)}–${bin.endMs.toFixed(2)} ms (${bin.count})`
+    )))
+    .join("; ");
+  assert.equal(histogramText, expectedHistogramText);
   dashboard.destroy();
 });
 

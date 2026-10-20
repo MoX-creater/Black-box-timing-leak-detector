@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
+    <a class="skip-link" href="#controls-heading">Skip to dashboard controls</a>
     <header class="site-header">
       <p class="eyebrow">Black-box timing analysis</p>
       <h1>Timing Leak Detector</h1>
@@ -16,7 +17,7 @@
       </p>
     </header>
 
-    <main id="dashboard" class="dashboard" aria-busy="true">
+    <main id="dashboard" class="dashboard" aria-busy="true" tabindex="-1">
       <section class="panel" aria-labelledby="controls-heading">
         <h2 id="controls-heading">Start a demo scan</h2>
         <form id="scan-form">
@@ -39,7 +40,7 @@
           <h2 id="progress-heading">Live progress</h2>
           <p id="scan-status" class="status" role="status" aria-live="polite">Idle</p>
         </div>
-        <p id="progress-message" class="progress-message">Choose a demo and start a scan.</p>
+        <p id="progress-message" class="progress-message" role="status" aria-live="polite" aria-atomic="true">Choose a demo and start a scan.</p>
         <dl class="counts" aria-label="Current sample counts">
           <div>
             <dt>A attempts</dt>
@@ -87,10 +88,11 @@
 
       <section class="panel histogram-panel" aria-labelledby="histogram-heading">
         <h2 id="histogram-heading">Accepted timing distribution</h2>
-        <p id="histogram-status" class="status" role="status" aria-live="polite">
+        <p id="histogram-status" class="status">
           Accepted timing bins will appear while the scan runs.
         </p>
         <div id="histogram-legend" class="chart-legend" aria-label="Histogram legend"></div>
+        <p id="histogram-text-alternative" class="visually-hidden"></p>
         <div id="histogram-output" class="histogram-output"></div>
       </section>
 

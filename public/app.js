@@ -301,9 +301,10 @@ export function createDashboard({
     "evidence-stop-reason",
     "evidence-u-a",
     "evidence-u-b",
-    "histogram-legend",
-    "histogram-output",
-    "histogram-status",
+     "histogram-legend",
+     "histogram-output",
+     "histogram-text-alternative",
+     "histogram-status",
     "load-status",
     "noise-select",
     "progress-message",
@@ -426,6 +427,15 @@ export function createDashboard({
     return scroll;
   }
 
+  function renderHistogramTextAlternative(groups) {
+    const entries = groups.flatMap((group) => group.bins.map((bin) => (
+      `${group.label}: ${fixedNumber(bin.startMs)}–${fixedNumber(bin.endMs)} ms (${bin.count})`
+    )));
+    elements["histogram-text-alternative"].textContent = entries.length > 0
+      ? entries.join("; ")
+      : "No accepted samples are available.";
+  }
+
   function renderHistogram() {
     const binsA = chartBins("a");
     const binsB = chartBins("b");
@@ -447,6 +457,7 @@ export function createDashboard({
     const plotHeight = height - margin.top - margin.bottom;
     const maxCount = Math.max(1, ...allBins.map((bin) => bin.count));
     const svg = svgElement("svg", {
+      "aria-describedby": "histogram-text-alternative",
       "aria-labelledby": "histogram-title histogram-description",
       class: "histogram-svg",
       role: "img",
@@ -592,6 +603,7 @@ export function createDashboard({
       elements["histogram-status"].textContent = "Showing accepted response timing bins.";
     }
     const table = renderHistogramTable(groups);
+    renderHistogramTextAlternative(groups);
     elements["histogram-output"].replaceChildren(svg, message, table);
   }
 
@@ -729,6 +741,7 @@ export function createDashboard({
     if (!currentRun(generation) || snapshot?.runId !== state.runId) {
       return;
     }
+    const previousLookIndex = state.lookIndex;
     applyProgress(snapshot.progress ?? {});
     state.histograms = normalizeHistograms(snapshot.histograms);
     state.evidence = normalizeEvidence(snapshot.evidence);
@@ -753,9 +766,13 @@ export function createDashboard({
       return;
     } else {
       state.phase = "running";
-      state.message = state.sseMode === "polling"
-        ? "Polling for live progress."
-        : "The scan is running.";
+      if (state.lookIndex !== previousLookIndex && state.lookIndex > 0) {
+        state.message = `Look ${state.lookIndex} complete.`;
+      } else if (state.message === "Preparing the bounded demo run.") {
+        state.message = state.sseMode === "polling"
+          ? "Polling for live progress."
+          : "The scan is running.";
+      }
     }
     render();
   }
@@ -772,8 +789,11 @@ export function createDashboard({
     }
     if (eventName === "scan:progress") {
       state.phase = "running";
+      const previousLookIndex = state.lookIndex;
       applyProgress(payload);
-      state.message = "Live progress received.";
+      if (state.lookIndex !== previousLookIndex && state.lookIndex > 0) {
+        state.message = `Look ${state.lookIndex} complete.`;
+      }
       render();
       return;
     }
