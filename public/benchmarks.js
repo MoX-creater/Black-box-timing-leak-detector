@@ -1,4 +1,5 @@
 const BENCHMARK_UNAVAILABLE_MESSAGE = "benchmark data not yet available";
+const COMPLETE_BENCHMARK_STATUS = "Real run recorded; default calibration TBD";
 
 function isObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -46,6 +47,15 @@ function formatMetric(metric) {
   return `${rate} (${successes}/${trials})${intervalText}`;
 }
 
+function detectionLimitation(results) {
+  const vulnerable = results.aggregates.filter((aggregate) => aggregate.targetId === "vulnerable");
+  const detectionDidNotDegrade = vulnerable.length > 0
+    && vulnerable.every((aggregate) => aggregate.detectionRate?.successes === aggregate.detectionRate?.trials);
+  return detectionDidNotDegrade
+    ? "Detection did not degrade under the tested presets, so this artifact does not show where it would."
+    : "Detection varied in the tested cells; this artifact does not establish behavior outside the tested presets.";
+}
+
 function milliseconds(value) {
   return Number.isFinite(value) ? `${value} ms` : "unavailable";
 }
@@ -65,13 +75,13 @@ function appendDefinitions(documentRef, container, entries) {
   container.append(list);
 }
 
-function renderProvenance(documentRef, container, provenance, schemaVersion, trials) {
+function renderProvenance(documentRef, container, provenance, schemaVersion, trials, status) {
   const matrix = isObject(provenance.matrix) ? provenance.matrix : {};
   const operatingSystem = isObject(provenance.os) ? provenance.os : {};
   appendDefinitions(documentRef, container, [
-    ["Benchmark status", provenance.benchmarkStatus],
+    ["Benchmark status", status === "complete" ? COMPLETE_BENCHMARK_STATUS : "unavailable"],
     ["Schema version", schemaVersion],
-    ["Git commit", provenance.codeCommit],
+    ["Code commit", provenance.codeCommit],
     ["Package version", provenance.packageVersion],
     ["Node version", provenance.nodeVersion],
     ["Express version", provenance.dependencies.express],
@@ -131,7 +141,7 @@ function renderBaseline(documentRef, container, baseline) {
       ["Absolute difference", milliseconds(entry?.absoluteDifferenceMs)],
       ["Threshold", milliseconds(entry?.thresholdMs)],
       ["Flagged", entry?.flagged],
-      ["Samples per group", entry?.samplesPerGroup],
+      ["Samples per group (nominal configured value)", entry?.samplesPerGroup],
       ["Failed requests", entry?.failedRequests],
       ["Duration", milliseconds(entry?.durationMs)],
       ["Seed", entry?.seed],
@@ -156,7 +166,7 @@ function isCompleteResults(results) {
     .every((key) => typeof provenance[key] === "string")
     || !Number.isSafeInteger(provenance.cpuCount) || provenance.cpuCount < 0
     || !Number.isSafeInteger(provenance.trialTimeoutMs) || provenance.trialTimeoutMs < 1
-    || typeof provenance.smoke !== "boolean"
+    || provenance.smoke !== false
     || provenance.freshDemoProcessPerCell !== true
     || provenance.noiseSequenceStartsAtRequest !== 1
     || typeof provenance.dependencies.express !== "string"
@@ -279,7 +289,7 @@ export function createBenchmarksPage({
     elements["benchmark-results"].hidden = false;
     elements["benchmark-status"].textContent = "Complete benchmark run";
     elements["benchmark-reason"].textContent = "";
-    elements["benchmark-results-note"].textContent = "Stored benchmark observations; threshold and default calibration remain TBD.";
+    elements["benchmark-results-note"].textContent = `Real run recorded; default calibration TBD. Stored observations are limited to the tested targets, presets, configuration, machine, and runtime; they are not product guarantees. ${detectionLimitation(results)}`;
     elements["benchmark-provenance"].replaceChildren();
     renderProvenance(
       documentRef,
@@ -287,6 +297,7 @@ export function createBenchmarksPage({
       results.provenance,
       results.schemaVersion,
       results.trials,
+      results.status,
     );
     renderAggregates(documentRef, elements["benchmark-aggregates"], results.aggregates);
     renderBaseline(documentRef, elements["benchmark-baseline"], results.baseline);

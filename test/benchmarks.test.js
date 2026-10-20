@@ -2,11 +2,16 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
+import {
+  validateBenchmarkResults,
+  wilsonInterval,
+} from "../bench/run.js";
 import { createBenchmarksPage } from "../public/benchmarks.js";
 import { validateBenchmarkArtifact } from "../src/server/benchmark-results.js";
 
 // Synthetic test-only data is never loaded from, or written to, bench/results.json.
 const completeFixture = JSON.parse(await readFile(new URL("./fixtures/benchmark-complete.json", import.meta.url), "utf8"));
+const committedArtifact = JSON.parse(await readFile(new URL("../bench/results.json", import.meta.url), "utf8"));
 
 function fixture() {
   return structuredClone(completeFixture);
@@ -173,6 +178,62 @@ test("artifact validator accepts the synthetic complete fixture unchanged withou
   assert.equal(results.aggregates[0].detectionRate.trials, 3);
 });
 
+test("committed T4.1 artifact preserves validated matrix invariants and stored aggregates", () => {
+  const results = structuredClone(committedArtifact);
+  assert.equal(validateBenchmarkResults(results), results);
+  assert.equal(validateBenchmarkArtifact(results), results);
+  assert.equal(results.status, "complete");
+  assert.equal(results.trials.length, 180);
+
+  const matrix = results.provenance.matrix;
+  const cellKey = (entry) => `${entry.targetId}/${entry.noisePresetId}`;
+  const cells = new Map();
+  for (const targetId of matrix.targets) {
+    for (const noisePresetId of matrix.noisePresets) {
+      cells.set(`${targetId}/${noisePresetId}`, []);
+    }
+  }
+  for (const trial of results.trials) {
+    assert.equal(trial.seed, matrix.seeds[0]);
+    assert.equal(typeof trial.derivedSeed, "string");
+    assert.ok(trial.derivedSeed.length > 0);
+    cells.get(cellKey(trial)).push(trial);
+  }
+  assert.equal(cells.size, 6);
+  assert.equal(new Set(results.trials.map((trial) => trial.derivedSeed)).size, 180);
+
+  const metric = (trials, predicate) => {
+    const successes = trials.filter(predicate).length;
+    return {
+      rate: successes / trials.length,
+      successes,
+      trials: trials.length,
+      wilson95: wilsonInterval(successes, trials.length),
+    };
+  };
+  for (const trials of cells.values()) {
+    assert.equal(trials.length, 30);
+    assert.ok(trials.every((trial) => trial.status === "completed"));
+  }
+  assert.equal(results.trials.filter((trial) => trial.status === "failed").length, 0);
+
+  for (const aggregate of results.aggregates) {
+    const trials = cells.get(cellKey(aggregate));
+    assert.equal(aggregate.trialCount, trials.length);
+    assert.equal(aggregate.completedCount, trials.filter((trial) => trial.status === "completed").length);
+    assert.equal(aggregate.failedCount, trials.filter((trial) => trial.status === "failed").length);
+    assert.deepEqual(aggregate.inconclusiveRate, metric(trials, (trial) => trial.verdict === "INCONCLUSIVE"));
+    if (aggregate.targetId === "vulnerable") {
+      assert.deepEqual(aggregate.detectionRate, metric(trials, (trial) => trial.verdict === "LEAK"));
+      assert.equal(aggregate.falsePositiveRate, null);
+    } else {
+      assert.equal(aggregate.detectionRate, null);
+      assert.deepEqual(aggregate.falsePositiveRate, metric(trials, (trial) => trial.verdict === "LEAK"));
+    }
+  }
+  assert.ok(results.baseline.every((entry) => entry.status === "unavailable"));
+});
+
 test("artifact validator preserves honest unavailable/incomplete states and nullable measurements", () => {
   for (const results of [unavailableFixture(), incompleteFixture(), unavailableBaseline(fixture())]) {
     assert.equal(validateBenchmarkArtifact(results), results);
@@ -319,6 +380,7 @@ test("benchmarks page renders provenance, counts, stored intervals, and baseline
   assert.match(pageText, /synthetic test-only CPU/);
   assert.match(pageText, /"alphaTotal":0\.05/);
   const provenance = documentRef.getElementById("benchmark-provenance");
+  assert.deepEqual(valuesOf(provenance, "Benchmark status"), ["Real run recorded; default calibration TBD"]);
   assert.deepEqual(valuesOf(provenance, "Matrix seeds"), ["synthetic-seed-01"]);
   assert.deepEqual(valuesOf(provenance, "Trial seeds"), ["synthetic-seed-01"]);
   for (const trial of completeFixture.trials) assert.match(valuesOf(provenance, "Run seeds")[0], new RegExp(trial.seed));
@@ -332,7 +394,30 @@ test("benchmarks page renders provenance, counts, stored intervals, and baseline
   assert.deepEqual(valuesOf(baseline, "Failed requests"), ["0", "20"]);
   assert.deepEqual(valuesOf(baseline, "Flagged"), ["yes", "unavailable"]);
   assert.match(pageText, /Mean B unavailable/);
-  assert.match(documentRef.getElementById("benchmark-results-note").textContent, /threshold and default calibration remain TBD/);
+  assert.match(documentRef.getElementById("benchmark-results-note").textContent, /Real run recorded; default calibration TBD/);
+  assert.match(documentRef.getElementById("benchmark-results-note").textContent, /tested targets, presets, configuration, machine, and runtime/);
+  assert.match(documentRef.getElementById("benchmark-results-note").textContent, /Detection varied in the tested cells/);
+  assert.deepEqual(valuesOf(baseline, "Samples per group (nominal configured value)"), ["20", "20"]);
+});
+
+test("benchmarks page exposes committed runtime provenance without printing stored status text", async () => {
+  const { documentRef } = await render(committedArtifact);
+  const provenance = documentRef.getElementById("benchmark-provenance");
+  const pageText = textOf(provenance);
+  const operatingSystem = committedArtifact.provenance.os;
+  assert.deepEqual(valuesOf(provenance, "Code commit"), [committedArtifact.provenance.codeCommit]);
+  assert.deepEqual(valuesOf(provenance, "Node version"), [committedArtifact.provenance.nodeVersion]);
+  assert.deepEqual(valuesOf(provenance, "CPU"), [committedArtifact.provenance.cpu]);
+  assert.match(pageText, new RegExp(`${operatingSystem.platform} ${operatingSystem.release}`));
+  assert.doesNotMatch(pageText, /TBD until a real full run is completed/);
+  assert.match(documentRef.getElementById("benchmark-results-note").textContent, /Detection did not degrade under the tested presets/);
+});
+
+test("benchmarks page does not render smoke output as complete evidence", async () => {
+  const smoke = structuredClone(committedArtifact);
+  smoke.provenance.smoke = true;
+  const { documentRef } = await render(smoke);
+  assertUnavailable(documentRef);
 });
 
 test("benchmarks page renders unavailable for a truncated response", async () => {
