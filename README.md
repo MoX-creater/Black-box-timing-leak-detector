@@ -485,6 +485,9 @@ stated here.
   arbitrary production authentication system.
 - Network noise, load changes, status mismatches, transport failures, and
   discarded samples can reduce the strength of an inference.
+- Under heavy CPU contention, an informal local smoke observation once produced
+  a `LEAK` verdict against the fixed demo; this is not a benchmark result, and
+  load can produce false positives.
 
 ## Project documentation
 

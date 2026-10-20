@@ -51,6 +51,11 @@ internal `targetId` to an internal service URL. The CLI is the only arbitrary-
 URL path. The web process keeps only bounded active-run state in memory and
 expires completed reports; it does not create scan history.
 
+**Future work (needs approval): load/contention gate.** Evaluate whether a run
+is affected by severe host or process contention and surface that condition
+before treating a timing verdict as evidence. This is not implemented in the
+current release.
+
 ## 2. Key technical decisions
 
 - **Mann-Whitney U, not a t-test:** timings are commonly skewed, heavy-tailed,

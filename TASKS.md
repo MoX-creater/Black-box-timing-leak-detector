@@ -274,6 +274,10 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-01, FR-03, FR-05, FR-08, FR-10, FR-11
 
+**Future work (needs approval): load/contention gate.** Define a bounded,
+evidence-backed way to detect severe host or process contention before treating
+a timing verdict as evidence. This follow-up is not implemented here.
+
 ### T4.6 — [Must-have] Verify the clean-clone release path last.
 
 - **Description:** Reproduce the project from a fresh clone, bring up Compose, run the single test command, and tear down the stack.
