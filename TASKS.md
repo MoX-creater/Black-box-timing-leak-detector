@@ -258,7 +258,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** L
 - **Linked PRD:** FR-07, FR-09, FR-10, FR-11
 
-### T4.4 — [Must-have] Finish the README and operational runbook.
+### [x] T4.4 — [Must-have] Finish the README and operational runbook.
 
 - **Description:** Document exact install/dev/test/bench/Docker/Compose/CLI/Render commands, request schema, safety warning, redaction, benchmark honesty, and cold-start behavior.
 - **Acceptance:** A reviewer can follow the README from a fresh checkout without undocumented flags; commands match `package.json`, `Dockerfile`, `compose.yaml`, and `render.yaml`; README contains no fabricated benchmark metric or secret.
