@@ -10,7 +10,7 @@
   "scripts": {
     "detect": "node src/cli/index.js",
     "dev": "node --watch src/server/index.js",
-    "test": "node --test",
+    "test": "node --test --test-concurrency=1",
     "bench": "node bench/run.js"
   },
   "dependencies": {
