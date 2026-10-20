@@ -45,6 +45,7 @@ test("compose and launcher produce the same demo noise and target configuration"
   assert.equal(web.environment.DEMO_VULNERABLE_PORT, "3001");
   assert.equal(web.environment.DEMO_FIXED_HOST, "127.0.0.1");
   assert.equal(web.environment.DEMO_FIXED_PORT, "3002");
+  assert.equal(web.environment.LAUNCHER_STARTUP_GATE, "1");
   assert.deepEqual(
     Object.keys(web.environment).filter((key) => key.startsWith("DEMO_NOISE_")),
     [],

@@ -59,6 +59,7 @@ export function buildStackSpecs(environment = process.env) {
     DEMO_VULNERABLE_HOST: "127.0.0.1",
     DEMO_VULNERABLE_PORT: "3001",
     HOST: environment.HOST ?? "0.0.0.0",
+    LAUNCHER_STARTUP_GATE: "1",
   };
   const specs = [
     childSpec("vulnerable", "demos/stub.js", 3001, {

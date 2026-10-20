@@ -37,6 +37,18 @@ async function waitForHealth(url, { deadlineMs = 30_000, intervalMs = 50 } = {})
   throw new Error(`Timed out waiting for ${url}`);
 }
 
+async function waitForSnapshot(baseUrl, runId) {
+  for (let attempt = 0; attempt < 400; attempt += 1) {
+    const response = await fetch(`${baseUrl}/api/scans/${runId}`);
+    const snapshot = await response.json();
+    if (snapshot.status !== "running") {
+      return snapshot;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error("launcher scan did not reach a terminal state");
+}
+
 test("launcher starts all processes and forwards termination", async () => {
   const webPort = await findFreePort();
   const stack = startStack({
@@ -46,8 +58,24 @@ test("launcher starts all processes and forwards termination", async () => {
 
   try {
     await waitForHealth(`http://127.0.0.1:${webPort}/healthz`);
-    await waitForHealth("http://127.0.0.1:3001/healthz");
-    await waitForHealth("http://127.0.0.1:3002/healthz");
+    const baseUrl = `http://127.0.0.1:${webPort}`;
+    for (const targetId of ["vulnerable", "fixed"]) {
+      const startResponse = await fetch(`${baseUrl}/api/scans`, {
+        body: JSON.stringify({ noisePresetId: "none", targetId }),
+        headers: { "content-type": "application/json" },
+        method: "POST",
+      });
+      assert.equal(startResponse.status, 202);
+      const run = await startResponse.json();
+      const snapshot = await waitForSnapshot(baseUrl, run.runId);
+      assert.notEqual(snapshot.status, "failed", JSON.stringify(snapshot));
+      assert.notEqual(snapshot.inference?.stopReason, "warmup-failed", JSON.stringify(snapshot));
+      if (targetId === "vulnerable") {
+        assert.equal(snapshot.verdict, "LEAK", JSON.stringify(snapshot));
+      } else {
+        assert.notEqual(snapshot.verdict, "LEAK", JSON.stringify(snapshot));
+      }
+    }
     stack.shutdown(0);
     assert.equal(await stack.done, 0);
   } finally {
