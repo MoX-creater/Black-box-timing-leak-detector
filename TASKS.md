@@ -278,7 +278,7 @@ change; never combine unrelated tasks in one commit.
 evidence-backed way to detect severe host or process contention before treating
 a timing verdict as evidence. This follow-up is not implemented here.
 
-### T4.6 — [Must-have] Verify the clean-clone release path last.
+### [x] T4.6 — [Must-have] Verify the clean-clone release path last.
 
 - **Description:** Reproduce the project from a fresh clone, bring up Compose, run the single test command, and tear down the stack.
 - **Acceptance:** In a disposable directory, run `git clone <repo-url> clean-checkout`, `cd clean-checkout`, `npm ci`, `docker compose up --build -d`, wait for `curl -fsS http://localhost:3000/healthz`, then run `npm test` and finish with `docker compose down -v`; all commands succeed and the dashboard/demo smoke path works.
