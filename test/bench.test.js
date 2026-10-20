@@ -5,15 +5,23 @@ import os from "node:os";
 import path from "node:path";
 
 import {
+  benchmarkStatusFor,
   createBenchmarkConfig,
   estimateBenchmark,
+  FULL_BENCHMARK_STATUS,
+  INCOMPLETE_BENCHMARK_STATUS,
   main,
   runBenchmark,
+  SMOKE_BENCHMARK_STATUS,
   unavailableResults,
   validateBenchmarkResults,
   wilsonInterval,
 } from "../bench/run.js";
 import { validateBenchmarkArtifact } from "../src/server/benchmark-results.js";
+
+const committedArtifact = JSON.parse(
+  await readFile(new URL("../bench/results.json", import.meta.url), "utf8"),
+);
 
 function streams() {
   let stdout = "";
@@ -54,11 +62,39 @@ test("full-run estimate is computed from the configured matrix", () => {
   assert.equal(estimate.estimatedRequests, 128);
 });
 
+test("full-run defaults match the committed T4.1 provenance", () => {
+  const config = createBenchmarkConfig();
+  const provenance = committedArtifact.provenance;
+  assert.deepEqual(config.targets, provenance.matrix.targets);
+  assert.deepEqual(config.noisePresets, provenance.matrix.noisePresets);
+  assert.deepEqual(config.seeds, provenance.matrix.seeds);
+  assert.equal(config.trialsPerSeed, provenance.matrix.trialsPerSeed);
+  assert.deepEqual(config.detector, provenance.detectorConfig);
+  assert.equal(config.trialTimeoutMs, provenance.trialTimeoutMs);
+  assert.equal(config.notes, provenance.notes);
+  assert.deepEqual(config.baseline, provenance.baselineConfig);
+});
+
+test("future full and smoke provenance statuses are distinct and schema-compatible", () => {
+  assert.equal(benchmarkStatusFor(), FULL_BENCHMARK_STATUS);
+  assert.equal(benchmarkStatusFor({ complete: false }), INCOMPLETE_BENCHMARK_STATUS);
+  assert.equal(benchmarkStatusFor({ smoke: true }), SMOKE_BENCHMARK_STATUS);
+  assert.equal(typeof committedArtifact.provenance.benchmarkStatus, "string");
+  assert.doesNotThrow(() => validateBenchmarkArtifact({
+    ...structuredClone(committedArtifact),
+    provenance: {
+      ...structuredClone(committedArtifact.provenance),
+      benchmarkStatus: FULL_BENCHMARK_STATUS,
+    },
+  }));
+});
+
 test("runner smoke output has completed trials and unavailable baseline", async () => {
   const results = await runBenchmark({ smoke: true });
   validateBenchmarkResults(results);
   validateBenchmarkArtifact(results);
   assert.equal(results.status, "complete");
+  assert.equal(results.provenance.benchmarkStatus, SMOKE_BENCHMARK_STATUS);
   assert.equal(results.provenance.freshDemoProcessPerCell, true);
   assert.equal(results.provenance.noiseSequenceStartsAtRequest, 1);
   assert.equal(typeof results.provenance.cpuCount, "number");

@@ -18,24 +18,23 @@ import { runDetector } from "../src/detector/index.js";
 export const BENCHMARK_SCHEMA_VERSION = "1.0";
 export const BENCHMARK_TARGETS = Object.freeze(["vulnerable", "fixed"]);
 export const BENCHMARK_PRESETS = Object.freeze(["none", "low", "high"]);
+export const FULL_BENCHMARK_STATUS = "Real full run completed; default calibration remains TBD";
+export const INCOMPLETE_BENCHMARK_STATUS = "Real full run incomplete; default calibration remains TBD";
+export const SMOKE_BENCHMARK_STATUS = "Smoke run; not benchmark evidence";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const DEFAULT_TRIAL_SEEDS = Object.freeze([
-  "benchmark-seed-01",
-  "benchmark-seed-02",
-  "benchmark-seed-03",
-]);
+const DEFAULT_TRIAL_SEEDS = Object.freeze(["t4.1-master-v1"]);
 const DEFAULT_DETECTOR_CONFIG = Object.freeze({
   alphaTotal: 0.05,
   bootstrapReplicates: 100,
-  lookBatchPerGroup: 2,
+  lookBatchPerGroup: 4,
   materialDiscardRateDifference: 0.2,
   maxAttempts: 20,
   maxConsecutiveFailures: 3,
   maxDiscardRate: 0.5,
-  maxValidPerGroup: 4,
+  maxValidPerGroup: 8,
   minAttemptsForDiscardRate: 2,
-  minValidPerGroup: 2,
+  minValidPerGroup: 4,
   quantile: 0.1,
   targetPower: 0.8,
 });
@@ -47,11 +46,11 @@ const DEFAULT_MATRIX_CONFIG = Object.freeze({
   }),
   detector: DEFAULT_DETECTOR_CONFIG,
   estimateRequestMs: 50,
-  notes: "Full benchmark matrix; tuning remains TBD until real benchmark output exists.",
+  notes: "8 vs 8 budget (matches public web scan); alpha, bootstrap count, quantile and discard limits are TBD pending T4.2 calibration; no thresholds tuned.",
   noisePresets: BENCHMARK_PRESETS,
   seeds: DEFAULT_TRIAL_SEEDS,
   targets: BENCHMARK_TARGETS,
-  trialsPerSeed: 3,
+  trialsPerSeed: 30,
   trialTimeoutMs: 30_000,
 });
 
@@ -110,6 +109,11 @@ function deriveSeed(baseSeed, domain, ...parts) {
     ...parts,
   ]));
   return `${domain}-${baseSeed}-${prng.nextUint32().toString(16).padStart(8, "0")}`;
+}
+
+export function benchmarkStatusFor({ complete = true, smoke = false } = {}) {
+  if (smoke) return SMOKE_BENCHMARK_STATUS;
+  return complete ? FULL_BENCHMARK_STATUS : INCOMPLETE_BENCHMARK_STATUS;
 }
 
 function cellDefinitions(config) {
@@ -238,7 +242,7 @@ async function createProvenance(config, { smoke, command }) {
   const packages = await packageMetadata();
   const cpuList = cpus();
   return {
-    benchmarkStatus: "TBD until a real full run is completed",
+    benchmarkStatus: benchmarkStatusFor({ smoke }),
     baselineConfig: clone(config.baseline),
     codeCommit: gitCommit(),
     cpu: cpuList[0]?.model ?? "unavailable",
@@ -670,18 +674,20 @@ export async function runBenchmark({
   const expectedCells = cellDefinitions(config).length;
   const complete = aggregates.length === expectedCells
     && aggregates.every((aggregate) => aggregate.completedCount > 0);
+  const benchmarkProvenance = {
+    ...provenance,
+    benchmarkStatus: benchmarkStatusFor({ complete, smoke }),
+    matrix: {
+      noisePresets: [...config.noisePresets],
+      seeds: [...config.seeds],
+      targets: [...config.targets],
+      trialsPerSeed: config.trialsPerSeed,
+    },
+  };
   const results = {
     aggregates,
     baseline,
-    provenance: {
-      ...provenance,
-      matrix: {
-        noisePresets: [...config.noisePresets],
-        seeds: [...config.seeds],
-        targets: [...config.targets],
-        trialsPerSeed: config.trialsPerSeed,
-      },
-    },
+    provenance: benchmarkProvenance,
     reason: complete ? null : "One or more matrix cells have no completed trial.",
     schemaVersion: BENCHMARK_SCHEMA_VERSION,
     status: complete ? "complete" : "incomplete",
