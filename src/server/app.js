@@ -193,6 +193,26 @@ function benchmarkUnavailable(response) {
   });
 }
 
+function handleFinalError(error, _request, response, _next) {
+  if (response.headersSent) {
+    response.end();
+    return;
+  }
+  const statusCode = Number.isInteger(error?.statusCode)
+    && error.statusCode >= 400 && error.statusCode < 500
+    ? error.statusCode
+    : Number.isInteger(error?.status) && error.status >= 400 && error.status < 500
+      ? error.status
+      : 500;
+  const body = statusCode < 500
+    ? { error: { code: "invalid-request", message: "Request is invalid" } }
+    : createErrorBody("internal-error");
+  response.status(statusCode).set({
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+  }).json(body);
+}
+
 export function writeSseEvent(response, event, payload) {
   if (!canWriteSse(response)) {
     return false;
@@ -445,6 +465,16 @@ export function createWebApp({ environment = process.env, managerOptions = {} } 
     redirect: false,
     setHeaders: setPublicHeaders,
   }));
+
+  app.use((_request, response) => {
+    response.status(404).set({
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+    }).json({
+      error: { code: "not-found", message: "Not found" },
+    });
+  });
+  app.use(handleFinalError);
 
   return app;
 }
