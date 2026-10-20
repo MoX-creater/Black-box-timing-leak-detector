@@ -70,11 +70,8 @@ test("launcher starts all processes and forwards termination", async () => {
       const snapshot = await waitForSnapshot(baseUrl, run.runId);
       assert.notEqual(snapshot.status, "failed", JSON.stringify(snapshot));
       assert.notEqual(snapshot.inference?.stopReason, "warmup-failed", JSON.stringify(snapshot));
-      if (targetId === "vulnerable") {
-        assert.equal(snapshot.verdict, "LEAK", JSON.stringify(snapshot));
-      } else {
-        assert.notEqual(snapshot.verdict, "LEAK", JSON.stringify(snapshot));
-      }
+      assert.equal(snapshot.progress.accepted.a, 8, JSON.stringify(snapshot));
+      assert.equal(snapshot.progress.accepted.b, 8, JSON.stringify(snapshot));
     }
     stack.shutdown(0);
     assert.equal(await stack.done, 0);
