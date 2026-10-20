@@ -266,7 +266,7 @@ change; never combine unrelated tasks in one commit.
 - **Estimate:** M
 - **Linked PRD:** FR-04, FR-08, FR-09, FR-11
 
-### T4.5 — [Must-have] Perform the final safety, determinism, and scope audit.
+### [x] T4.5 — [Must-have] Perform the final safety, determinism, and scope audit.
 
 - **Description:** Review the diff for arbitrary web URLs, unseeded randomness, sleeps, leaked metadata, unbounded runs, unpublished demo ports, generated noise, and unrelated changes.
 - **Acceptance:** `git diff --check` is clean; `rg 'Math\.random|sleep\(' src bench test` returns no forbidden use; tests cover authorization, rate limits, redaction, discard accounting, and all verdicts; `docker compose config` publishes only the web port; `git status` contains only intended release files.
