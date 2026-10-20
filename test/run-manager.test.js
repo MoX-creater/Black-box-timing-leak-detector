@@ -387,6 +387,37 @@ test("trust proxy configuration is explicit and defaults to not trusting forward
   await trusted.locals.runManager.shutdown();
 });
 
+test("uses the configured trusted proxy hops for real request client IPs", async () => {
+  async function readClientIp(trustProxyHops) {
+    const app = createWebApp({
+      environment: { TRUST_PROXY_HOPS: String(trustProxyHops) },
+    });
+    app.get("/_test/client-ip", (request, response) => {
+      response.json({ ip: request.ip, ips: request.ips });
+    });
+    const server = app.listen(0, "127.0.0.1");
+    await once(server, "listening");
+    const address = server.address();
+    assert.ok(address && typeof address === "object");
+    try {
+      const response = await fetch(`http://127.0.0.1:${address.port}/_test/client-ip`, {
+        headers: { "x-forwarded-for": "203.0.113.10, 198.51.100.2" },
+      });
+      assert.equal(response.status, 200);
+      return response.json();
+    } finally {
+      await app.locals.runManager.shutdown();
+      await closeHttpServer(server);
+    }
+  }
+
+  assert.deepEqual(await readClientIp(0), { ip: "127.0.0.1", ips: [] });
+  assert.deepEqual(await readClientIp(1), {
+    ip: "198.51.100.2",
+    ips: ["198.51.100.2"],
+  });
+});
+
 test("one real local scan uses the shared HTTP dispatcher and produces a valid report", async () => {
   const server = createServer((_request, response) => {
     response.writeHead(200, { "content-type": "application/json" });
